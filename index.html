@@ -1,34 +1,297 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>PrioNote</title>
-    <meta charset="utf-8">
-    <script src="note.js"></script>
-    <script src="index.js"></script>
-    <link rel="stylesheet" href="base.css"/>
+    <title>Prio Note - Priority for your notes</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.2.0.min.css"/>
     <link rel="stylesheet" href="index.css"/>
+    <script src="jquery/jquery-1.8.2.min.js"></script>
+    <script src="jquery/jquery.mobile-1.2.0.min.js"></script>
+    <script src="index.js"></script>
+    <script src="note.js"></script>
   </head>
   <body>
-    <header>
-      <div>
-	<table id="headerButtons">
-	  <tr>
-	    <td class="headButton" id="high_button">High</td>
-	    <td class="headButton" id="medium_button">Medium</td>
-	    <td class="headButton" id="low_button">Low</td>
-	    <td class="headButton" id="none_button">None</td>
-	  </tr>
-	</table>
+    <div id="mainPage" data-role="page">
+      <div data-role="header" data-id="headerFooter" data-position="fixed">
+	<ul data-role="listview">
+	  <li data-role="header">
+	    <center>PrioNote</center><span id="totalCount"class="ui-li-count">123</span>
+	  </li>
+	</ul>
+	<div data-role="navbar">
+	  <ul>
+	    <li id="highButton" class="highButtonClass"><a href="#">High</a></li>
+	    <li id="mediumButton" class="mediumButtonClass"><a href="#">Medium</a></li>
+	    <li id="lowButton" class="lowButtonClass"><a href="#">Low</a></li>
+	    <li id="noneButton" class="noneButtonClass"><a href="#">None</a></li>
+	  </ul>
+	</div>
       </div>
-    </header>
-    <div id="div_note_table">
+      <div id="noteListDiv">
+	<ul id="noteList" data-role="listview" data-dividertheme="d">
+	  <li data-role="list-divider"><center id="prioHeader">High Priority</center><span id="prioCount" class="ui-li-count">23</span></li>
+	  <li>
+	    <a href="#" id="testMenu">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+	  <li>
+	    <a href="#">
+	      <h1></h1>This is all the text that is in the note and jada jada ho, I want to write more to see what is happening
+	      <p class="ui-li-aside"><strong>2010-10-28 09:34</strong></p>
+	    </a>
+	  </li>
+
+	</ul>
+      </div>
+      <div data-role="footer" data-id="headerFooter" data-position="fixed">
+	<div data-role="navbar">
+	  <ul>
+	    <li><a data-icon="gear" data-rel="popup" data-position-to="window" href="#optionPopup">Options</a></li>
+	    <li><a id="newButton" data-icon="plus" href="#notePage">New note</a></li>
+	    <li><a data-icon="info" data-rel="popup" data-position-to="window" href="#about">About</a></li>
+	  </ul>
+	</div>
+      </div>
+      <!-- Popup menues -->
+      <div id="noteMenu" data-role="popup" data-overlay-theme="a">
+	<ul data-role="listview" data-inset="true" data-theme="b">
+	  <li data-role="divider" data-theme="a">Note menu</li>
+	  <li><a id="editNoteButton" href="#notePage">Edit note</a></li>
+	  <li><a href="#" data-theme="e" id="callDeleteNote">Delete note</a></li>
+	</ul>
+      </div>
+      <div id="deleteMenu" data-role="popup" data-overlay-theme="a">
+	<div data-role="header">
+	  <center><p>Delete Note?</p></center>
+	</div>
+	<div data-role="content" data-theme="e">
+	  <p>Are you shure you want to delete selected note?</p>
+	  <center>
+	    <a href="#" data-role="button" data-rel="back" data-inline="true">Cancel</a>
+	    <a id="deleteButton" href="#" data-role="button" data-rel="back" data-inline="true" data-theme="b">Delete</a>
+	  </center>
+	</div>
+      </div>
+      <div id="deleteConfirm" data-role="popup" data-overlay-theme="a" data-theme="e">
+	  <p>Note is deleted</p>
+      </div>
+      <div id="about" data-role="popup" data-overlay-theme="a">
+	<div data-role="header">
+	  <center><p>About PrioNote</p></center>
+	</div>
+	<div data-role="content" data-theme="e">
+	  <strong>
+	    <p>Prio Note version 1.0</p>
+	    <p>Priority for your notes</p>
+	    <p>Copyright&copy;2012 Marcus Pedersén</p>
+	    <p>Delivered under GNU GPL version 3 or later.</p>
+	  </strong>
+	  <center>
+	    <a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b">OK</a>
+	    <a href="license.html" data-role="button" data-inline="true" data-theme="b">License</a>
+	  </center>
+	</div>
+      </div>
+      <div id="optionPopup" data-role="popup" data-overlay-theme="a">
+	<div data-role="header">
+	  <center><p>Options</p><center>
+	</div>
+	<div data-role="content" data-theme="e">
+	  <label for="selectSort">Sort by:</label>
+	  <select id="selectSort">
+	    <option value="editDate">Edit date</option>
+	    <option value="reverseEditDate">Reverse edit date</option>
+	    <option value="creationDate">Creation date</option>
+	    <option value="reverseCreationDate">Reverse creation date</option>
+	    <option value="alphabeticOrder">Alphabetic order</option>
+	    <option value="reverseAlphabeticOrder">Reverse alphabetic order</option>
+	  </select>
+	  <center>
+	    <a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b">Cancel</a>
+	    <a href="#" data-role="button" data-inline="true" data-theme="b">OK</a>
+	  </center>
+	</div>
+      </div>
     </div>
-    <footer>
-      <table>
-	<tr>
-	  <td><button id="new_button">New note</button></td>
-	</tr>
-      </table>
-    </footer>
+    <!-- Note Page -->
+    <div id="notePage" data-role="page">
+      <div id="header" data-role="header" data-position="fixed">
+	<center><p id="noteHeaderText">New note</p></center>
+      </div>
+      <div id="content" data-role="content">
+	<div id="prioDiv" data-role="fieldcontain">
+	  <label for="selectPrio">Priority:</label>
+	  <select id="selectPrio" data-theme="b" data-native-menu="false">
+	    <option value="high">High</option>
+	    <option value="medium">Medium</option>
+	    <option value="low">Low</option>
+	    <option value="none">None</option>
+	  </select>
+	</div>
+  	<div id="noteDatesDiv">
+	  <p>
+	    <label id="noteCreateDate">Created date:</label></br>
+	    <label id="noteEditDate">Edit date:</label>
+	  </p>
+	</div>
+	<div>
+	  <label for="text">Text:</label>
+	  <textarea id="text"></textarea>
+	</div>
+      </div>
+      <div id="footer" data-role="footer" data-position="fixed">
+	<div data-role="navbar">
+	  <ul>
+	    <li><a id="noteButtonCancel" data-icon="delete" href="#mainPage">Cancel</a></li>
+	    <li><a id="noteButtonSave" data-icon="plus" href="#">Save</a></li>
+	  </ul>
+	</div>
+      </div>
+      <!-- Note page popup menu -->
+      <div id="noteNoTextAlert" data-role="popup" data-overlay-theme="a">
+	<div data-role="header">
+	  <center><p>No text</p><center>
+	</div>
+	<div data-role="content" data-theme="e">
+	  <p>There is no text, please enter text and save again!</p>
+	  <center>
+	    <a href="#" data-role="button" data-inline="true" data-theme="b" data-rel="back">OK</a>
+	  </center>
+	</div>
+      </div>
+    </div>
+    <!-- Note Show Page -->
+    <div id="noteShowPage" data-role="page">
+      <div id="noteShowHeader" data-role="header" data-position="fixed">
+	<center><p id="noteShowHeaderText">Show note</p></center>
+      </div>
+      <div id="showNoteContent" data-role="content">
+	<div id="prioDivShow" data-role="fieldcontain">
+	  <label for="selectPrioShow">Priority:</label>
+	  <select id="selectPrioShow" data-theme="b" disabled="true">
+	    <option value="high">High</option>
+	    <option value="medium">Medium</option>
+	    <option value="low">Low</option>
+	    <option value="none">None</option>
+	  </select>
+	</div>
+  	<div>
+	  <p>
+	    <label id="showNoteCreateDate">Created date:</label></br>
+	    <label id="showNoteEditDate">Edit date:</label>
+	  </p>
+	</div>
+	<div>
+	  <label for="textShow">Text:</label>
+	  <textarea id="textShow" readOnly="true"></textarea>
+	</div>
+      </div>
+      <div id="showNoteFooter" data-role="footer" data-position="fixed">
+	<div data-role="navbar">
+	  <ul>
+	    <li><a id="noteShowButtonCancel" data-icon="delete" href="#" data-rel="back">Cancel</a></li>
+	    <li><a id="noteShowButtonEdit" data-icon="plus" href="#notePage">Edit</a></li>
+	  </ul>
+	</div>
+      </div>
+    </div>
   </body>
 </html>

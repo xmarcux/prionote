@@ -1,36 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8">
-    <title>Prionote - New Note</title>
-    <script src="note.js"></script>
-    <script src="newnote.js"></script>
-    <link rel="stylesheet" href="base.css"/>
-    <link rel="stylesheet" href="newnote.css"/>
+    <title>Prio Note - Priority for your notes</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.2.0.min.css"/>
+<!--    <link rel="stylesheet" href="newnote.css"/>-->
+    <script src="jquery/jquery-1.8.2.min.js"></script>
+    <script src="jquery/jquery.mobile-1.2.0.min.js"></script>
+<!--    <script src="newnote.js"></script>-->
   </head>
   <body>
-    <header>
-      <div id="header_title">New Note</div>
-    </header>
-    <div id="select_prio">
-      <label for="prio_select">Priority:</label>
-      <select id="prio_select">
-	<option value="high">High</option>
-	<option value="medium">Medium</option>
-	<option value="low">Low</option>
-	<option value="none">None</option>
-      </select>
+    <div id="notePage" data-role="page">
+      <div id="header" data-role="header" data-position="fixed">
+	<center><p>New note</p></center>
+      </div>
+      <div id="content" data-role="content">
+	<div id="prioDiv" data-role="fieldcontain">
+	  <label for="selectPrio">Priority:</label>
+	  <select id="selectPrio" data-theme="b">
+	    <option value="high">High</option>
+	    <option value="medium">Medium</option>
+	    <option value="low">Low</option>
+	    <option value="none">None</option>
+	  </select>
+	</div>
+	<div>
+	  <label for="text">Text:</label>
+	  <textarea id="text"></textarea>
+	</div>
+      </div>
+      <div id="footer" data-role="footer" data-position="fixed">
+	<div data-role="navbar">
+	  <ul>
+	    <li><a data-icon="delete" href="#" data-rel="back">Cancel</a></li>
+	    <li><a id="buttonSave" data-icon="plus" href="#">Save</a></li>
+	  </ul>
+	</div>
+      </div>
     </div>
-    <div id="div_textarea">
-      <textarea id="textarea"></textarea>
-    </div>
-    <footer>
-      <table>
-	<tr>
-	  <td><button id="save_button">Save</button></td>
-	  <td><button id="cancel_button">Cancel</button></td>
-	</tr>
-      </table>
-    </footer>
   </body>
 </html>

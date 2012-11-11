@@ -1,323 +1,309 @@
-var bgColor = "grey"; //"#B8B8B8";
-var color = "white";
+$(document).ready(function(){
+    init();
+    $("#highButton a").click(highButtonClicked);
+    $("#mediumButton a").click(mediumButtonClicked);
+    $("#lowButton a").click(lowButtonClicked);
+    $("#noneButton a").click(noneButtonClicked);
+
+    $("#highButton a").click();
+//remove after testing
+    $("#testMenu").bind("taphold", function(){
+	$("#noteMenu").popup("open");
+    });
+
+    $("#testMenu").click(function(){
+	if($("#noteShowPage"))
+	    noteShowPageInit();
+	$.mobile.changePage($("#noteShowPage"));
+    });
+//end remove
+    $("#callDeleteNote").click(function(){
+	$("#noteMenu").popup("close");
+	setTimeout(function(){	$("#deleteMenu").popup("open");}, 200);
+    });
+
+    $("#deleteButton").click(function(){
+	setTimeout(function(){ $("#deleteConfirm").popup("open");}, 200);
+    });
+
+    $("#newButton").click(function(){
+	sessionStorage.notePage = "new";
+	if($("#noteHeaderText"))
+	    notePageInit();
+    });
+
+    $("#editNoteButton").click(function(){
+	sessionStorage.notePage = "edit";
+	if($("#noteHeaderText"))
+	    notePageInit();
+    });
+
+    $("#notePage").on("pageinit", notePageInit);
+    $("#notePage").on("pagehide", function(){
+	$("#noteButtonCancel").removeClass("ui-btn-active");
+	$("#noteButtonSave").removeClass("ui-btn-active");
+    });
+
+    $("#noteButtonSave").click(saveNote);
+
+
+    $("#noteShowPage").on("pagehide", function(){
+	$("#noteShowButtonCancel").removeClass("ui-btn-active");
+	$("#noteShowButtonEdit").removeClass("ui-btn-active");
+    });
+
+    $("#noteShowButtonEdit").click(function(){
+	sessionStorage.notePage = "edit";
+	if($("#noteHeaderText"))
+	    notePageInit();
+    });
+});
 
 function init(){
-    var highButton = document.getElementById("high_button");
-    var mediumButton = document.getElementById("medium_button");
-    var lowButton = document.getElementById("low_button");
-    var noneButton = document.getElementById("none_button");
-    var newButton = document.getElementById("new_button");
+    var high = localStorage.getItem("highNotes");
+    high = JSON.parse(high);
+    var medium = localStorage.getItem("mediumNotes");
+    medium = JSON.parse(medium);
+    var low = localStorage.getItem("lowNotes");
+    low = JSON.parse(low);
+    var none = localStorage.getItem("noneNotes");
+    none = JSON.parse(none);
 
-    highButton.style.backgroundColor = bgColor;
-    highButton.style.color = color;
-    highButton.style.fontWeight = "normal";
-    mediumButton.style.backgroundColor = bgColor;
-    mediumButton.style.color = color;
-    mediumButton.style.fontWeight = "normal";
-    lowButton.style.backgroundColor = bgColor;
-    lowButton.style.color = color;
-    lowButton.style.fontWeight = "normal";
-    noneButton.style.backgroundColor = bgColor;
-    noneButton.style.color = color;
-    noneButton.style.fontWeight = "normal";
+    var noNotes = 0;
+    if(high)
+	noNotes = high.length;
+    if(medium)
+	noNotes +=  medium.length;
+    if(low)
+	noNotes += low.length;
+    if(none)
+	noNotes += none.length;
 
-    if(!sessionStorage.currentPrio || sessionStorage.currentPrio == "high"){
-	highButton.style.backgroundColor = "#FF3333";//"red";
-	highButton.style.color = "black";//"white";
-	highButton.style.fontWeight = "bold";
-    }
-    else if(sessionStorage.currentPrio == "medium"){
-	mediumButton.style.backgroundColor = "#FFCC00";//"yellow";
-	mediumButton.style.color = "black";
-	mediumButton.style.fontWeight = "bold";
+    $("#totalCount").text(noNotes);
+
+    var noPrioNotes = 0;
+    if(sessionStorage.currentPrio == "medium"){
+	if(medium)
+	    noPrioNotes = medium.length;
     }
     else if(sessionStorage.currentPrio == "low"){
-	lowButton.style.backgroundColor = "#66CC00";//"green";
-	lowButton.style.color = "black";//"white";
-	lowButton.style.fontWeight = "bold";
+	if(low)
+	    noPrioNotes = low.length;
+    }
+    else if(sessionStorage.currentPrio == "none"){
+	if(none)
+	    noPrioNotes = none.length;
     }
     else{
-	noneButton.style.backgroundColor = "#0099FF";// "blue";
-	noneButton.style.color = "black";//"white";
-	noneButton.style.fontWeight = "bold";
+	if(high)
+	    noPrioNotes = high.length;
     }
+    $("#prioCount").text(noPrioNotes);
 
-    highButton.onmousedown = headerMouseDown;
-    highButton.onmouseout = headerMouseOut;
-    highButton.onclick = headerMouseClick;
-
-    mediumButton.onmousedown = headerMouseDown;
-    mediumButton.onmouseout = headerMouseOut;
-    mediumButton.onclick = headerMouseClick;
-
-    lowButton.onmousedown = headerMouseDown;
-    lowButton.onmouseout = headerMouseOut;
-    lowButton.onclick = headerMouseClick;
-
-    noneButton.onmousedown = headerMouseDown;
-    noneButton.onmouseout = headerMouseOut;
-    noneButton.onclick = headerMouseClick;
-
-    newButton.onclick = newButtonClicked;
-
-    var header = document.getElementsByTagName("header")[0];
-    var footer = document.getElementsByTagName("footer")[0];
-    var divTable = document.getElementById("div_note_table");
-
-    divTable.style.paddingTop = header.scrollHeight + "px";
-    divTable.style.paddingBottom = footer.scrollHeight + "px";
-
-    buildNoteTable();
+    fillTable();
 }
 
-function newButtonClicked(){
-    window.location = "newnote.html";
-}
+function fillTable(){
+    var notesArray;
+    if(sessionStorage.currentPrio)
+	notesArray = localStorage.getItem(sessionStorage.currentPrio + "Notes");
+    else
+	notesArray = localStorage.getItem("highNotes");
 
-function headerMouseDown(e){
-    var target = e.target;
-    if(target.style.backgroundColor == bgColor){
-	target.style.backgroundColor = "white";
-	target.style.color = "black";
-    }
-}
+    $("#noteList li").each(function(){
+	if($(this).attr("data-role") != "list-divider")
+	    $(this).remove();
+    });
+    $("#noteListDiv p").remove();
 
-function headerMouseOut(e){
-    var target = e.target;
-    var targetId = target.getAttribute("id");
-    var high = document.getElementById("high_button");
-    var medium = document.getElementById("medium_button");
-    var low = document.getElementById("low_button");
-    var none = document.getElementById("none_button");
-    var clickedButton;
-    if(high.style.backgroundColor != bgColor && high.style.backgroundColor != color)
-	clickedButton = high;
-    if(medium.style.backgroundColor != bgColor && medium.style.backgroundColor != color)
-	clickedButton = medium;
-    if(low.style.backgroundColor != bgColor && low.style.backgroundColor != color)
-	clickedButton = low;
-    if(none.style.backgroundColor != bgColor && none.style.backgroundColor != color)
-	clickedButton = none;
+    var head = $("#prioHeader");
+    if(sessionStorage.currentPrio == "medium")
+	head.text("Medium Priority");
+    else if(sessionStorage.currentPrio == "low")
+	head.text("Low Priority");
+    else if(sessionStorage.currentPrio == "none")
+	head.text("None Priority");
+    else
+	head.text("High Priority");
 
-    if(clickedButton.getAttribute("id") != targetId){
-	target.style.backgroundColor = bgColor;
-	target.style.color = color;
-    }
-}
+    if(notesArray){
+	notesArray = JSON.parse(notesArray);
+	$("#prioCount").text(notesArray.length);
+	var ulList = $("#noteList");
+	for(var i=0; i<notesArray.length; i++){
+	    var li = $("<li></li>");
+	    var a = $("<a href='#' id='" + notesArray[i].number + "'></a>");
+	    var p = $("<p class='ui-li-aside'></p>");
 
-function headerMouseClick(e){
-    var target = e.target;
-    var highButton = document.getElementById("high_button");
-    var mediumButton = document.getElementById("medium_button");
-    var lowButton = document.getElementById("low_button");
-    var noneButton = document.getElementById("none_button");
-
-    highButton.style.backgroundColor = bgColor;
-    highButton.style.color = color;
-    highButton.style.fontWeight = "normal";
-    mediumButton.style.backgroundColor = bgColor;
-    mediumButton.style.color = color;
-    mediumButton.style.fontWeight = "normal";
-    lowButton.style.backgroundColor = bgColor;
-    lowButton.style.color = color;
-    lowButton.style.fontWeight = "normal";
-    noneButton.style.backgroundColor = bgColor;
-    noneButton.style.color = color;
-    noneButton.style.fontWeight = "normal";
-
-    if(target.getAttribute("id") == "high_button"){
-	target.style.backgroundColor = "#FF3333";//red";
-	target.style.color = "black";//"white";
-	sessionStorage.currentPrio = "high";
-    }
-    else if(target.getAttribute("id") == "medium_button"){
-	target.style.backgroundColor = "#FFCC00";//"yellow";
-	target.style.color = "black";
-	sessionStorage.currentPrio = "medium";
-    }
-    else if(target.getAttribute("id") == "low_button"){
-	target.style.backgroundColor = "#66CC00";//"green";
-	target.style.color = "black";//"white";
-	sessionStorage.currentPrio = "low";
-    }
-    else{
-	target.style.backgroundColor = "#0099FF"; //"blue";
-	target.style.color = "black";//"white";
-	sessionStorage.currentPrio = "none";
-    }
-
-    target.style.fontWeight = "bold";
-
-    buildNoteTable();
-
-}
-
-function buildNoteTable(){
-    /* test div
-    var noteTable = document.getElementById("note_table");
-    noteTable.innerHTML = "";
-    */
-    //test div
-    var noteTable = document.getElementById("div_note_table");
-    noteTable.innerHTML = "";
-
-    if(!sessionStorage.currentPrio)
-	sessionStorage.currentPrio = "high";
-
-    if(!localStorage.getItem(sessionStorage.currentPrio + "Notes")){
-	var tr = document.createElement("tr");
-	var td = document.createElement("td");
-	td.innerHTML = "No notes...";
-	tr.appendChild(td);
-	noteTable.appendChild(tr);
-    }
-    else{
-	var notes = localStorage.getItem(sessionStorage.currentPrio +"Notes");
-	notes = JSON.parse(notes);
-	for(var i=0; i<notes.length; i++){
-	    /* test with div
-	    var tr = document.createElement("tr");
-	    var tdDate = document.createElement("td");
-	    var tdText = document.createElement("td");
-	    */
-
-	    //testi
-	    var t = document.createElement("table");
-	    var trr = document.createElement("tr");
-	    var td1 = document.createElement("td");
-	    var td2 = document.createElement("td");
-	    //testi css
-	    t.setAttribute("width", "100%");
-	    t.style.borderStyle = "none";
-	    t.style.borderCollapse = "collapse";
-	    td1.setAttribute("width", "50%");
-	    td1.style.fontSize = "small";
-	    td2.setAttribute("width", "50%");
-	    td2.style.textAlign = "right";
-	    td2.style.fontSize = "small";
-
-	    var tr = document.createElement("div");
-	    tr.setAttribute("class", "note_row");
-	    var tdDate = document.createElement("div");
-	    tdDate.setAttribute("class", "date_cell");
-	    var tdText = document.createElement("div");
-	    tdText.setAttribute("class", "text_cell");
-
-	    var d = new Date(notes[i].number);
-	    var dString = d.getFullYear() + "-";
-	    if(d.getMonth() <9)
-		dString += "0" + (d.getMonth()+1) + "-";
+	    var d = new Date(notesArray[i].editDate);
+	    var dStr = d.getFullYear() + "-";
+	    if(d.getMonth < 10)
+		dStr += "0" + d.getMonth() + "-";
 	    else
-		dString += (d.getMonth()+1) + "-";
-
+		dStr += d.getMonth() + "-";
 	    if(d.getDate() < 10)
-		dString += "0" + d.getDate() + " ";
+		dStr += "0" + d.getDate();
 	    else
-		dString += d.getDate() + "&nbsp;";
+		dStr += d.getDate();
 
-	    if(d.getHours() < 10)
-		dString += "0" + d.getHours() + ":";
-	    else
-		dString += d.getHours() + ":";
+	    a.html("<h1></h1>" + notesArray[i].text);
+	    p.html("<strong>" + dStr + "</strong>");
+	    a.append(p);
+	    li.append(a);
+	    li.attr("id", notesArray[i].number);
+	    ulList.append(li);
 
-	    if(d.getMinutes() < 10)
-		dString += "0" + d.getMinutes();
-	    else
-		dString += d.getMinutes();
+	    li.click(noteShowPageInit);
+	    li.bind("taphold", function(){
+		$("#noteMenu").popup("open");
+	    });
 
-	    //testi
-	    var dc = new Date(notes[i].created);
-	    var cString = dc.getFullYear() + "-";
-	    if(dc.getMonth() <9)
-		cString += "0" + (dc.getMonth()+1) + "-";
-	    else
-		cString += (dc.getMonth()+1) + "-";
+	}
+	ulList.listview("refresh");
+    }
+    else{
+	$("#noteListDiv").append("<p><strong>There are no notes to show...<strong></p>");
+	$("#prioCount").text("0");
+    }
+}
 
-	    if(dc.getDate() < 10)
-		cString += "0" + dc.getDate() + " ";
-	    else
-		cString += dc.getDate() + "&nbsp;";
+function notePageInit(){
+    var title;
 
-	    if(dc.getHours() < 10)
-		cString += "0" + dc.getHours() + ":";
-	    else
-		cString += dc.getHours() + ":";
+    if(sessionStorage.notePage == "new"){
+	title = "New Note";
+	$("#text").val("");
+	$("#selectPrio").removeAttr("selected");
+	$("#selectPrio option:first").attr("selected", "selected");
 
-	    if(dc.getMinutes() < 10)
-		cString += "0" + dc.getMinutes();
-	    else
-		cString += dc.getMinutes();
+	$("#noteDatesDiv").hide();
+    }
+    else{
+	title = "Edit Note";
+	$("#noteDatesDiv").show();
+    }
+ 
+    if($("#prioDiv").hasClass("ui-body"))
+	$("#selectPrio").selectmenu("refresh", true);
+    
+    $("#noteHeaderText").text(title);
+}
 
-	    td1.innerHTML = dString;
-	    td2.innerHTML = cString;
+function highButtonClicked(){
+    sessionStorage.currentPrio = "high";
+    fillTable();
+}
 
-	    tdText.innerHTML = notes[i].text;
+function mediumButtonClicked(){
+    sessionStorage.currentPrio = "medium";
+    fillTable();
+}
 
-	    t.appendChild(trr);
-	    trr.appendChild(td1);
-	    trr.appendChild(td2);
-	    tdDate.appendChild(t);
-	    tr.appendChild(tdDate);
-	    tr.appendChild(tdText);
-	    tr.setAttribute("id", notes[i].number);
-	    // test div tr.setAttribute("class", "note_row");
-	    tr.onclick = onNoteClick;
-	    tr.onmousedown = onNoteMouseDown;
-	    tr.onmouseup = onNoteMouseUp;
-	    noteTable.appendChild(tr);
+function lowButtonClicked(){
+    sessionStorage.currentPrio = "low";
+    fillTable();
+}
 
-	    var width = window.innerWidth - tdDate.offsetWidth;
-	    tdText.setAttribute("width", width + "px");
-	    //alert(tdDate.offsetWidth);
-	    //test if text overflows if it does cut it so it fits
-	    // if a row already exists the test should be done
-	    // before appendChild
-	    // removeChild(tr)??, cut text and insert again??
+function noneButtonClicked(){
+    sessionStorage.currentPrio = "none";
+    fillTable();
+}
+
+function saveNote(){
+    var text = $("#text").val();
+    if(text.length <= 0)
+	$("#noteNoTextAlert").popup("open");
+    else{
+	var prio = $("#selectPrio").val();
+	var date = new Date();
+	date = date.getTime();
+	var note = new Note(date, date, text);
+
+	var notes;
+	if(!localStorage.getItem(prio + "Notes"))
+	    notes = new Array();
+	else{
+	    notes = localStorage.getItem(prio + "Notes");
+	    notes = JSON.parse(notes);
+	}
+	
+	if(!sessionStorage.editNote){
+	    notes.push(note);
+	}
+	else{
+	    //editing a note...replace old note
+	}
+
+	localStorage.setItem(prio + "Notes", JSON.stringify(notes));
+	sessionStorage.currentPrio = prio;
+	$("#" + prio + "Button a").click();
+
+	var noNotes = new Number($("#totalCount").text());
+	$("#totalCount").text(noNotes + 1);
+
+	$.mobile.changePage($("#mainPage"));
+    }
+}
+
+function noteShowPageInit(){
+    var id = $(this).attr("id");
+    var note;
+    var noteArray;
+    $("#selectPrioShow").removeAttr("selected");
+    if(sessionStorage.currentPrio == "medium"){
+	notesArray = localStorage.getItem("mediumNotes");
+	$("#selectPrioShow").children("[value='medium']").attr("selected", "selected");
+    }
+    else if(sessionStorage.currentPrio == "low"){
+	notesArray = localStorage.getItem("lowNotes");
+	$("#selectPrioShow").children("[value='low']").attr("selected", "selected");
+    }
+    else if(sessionStorage.currentPrio == "none"){
+	notesArray = localStorage.getItem("noneNotes");
+	$("#selectPrioShow").children("[value='none']").attr("selected", "selected");
+
+    }
+    else{
+	notesArray = localStorage.getItem("highNotes");
+	$("#selectPrioShow").children("[value='high']").attr("selected", "selected");
+    }
+    if($("#noteShowHeader").hasClass("ui-header"))
+	$("#selectPrioShow").selectmenu("refresh", true);
+
+    notesArray = JSON.parse(notesArray);
+
+    for(var i=0; i<notesArray.length; i++){
+	if(notesArray[i].number == id){
+	    note = notesArray[i];
+	    break;
 	}
     }
-}
+    $("#textShow").text(note.text);
 
-function onNoteClick(e){
-    var parent = e.target;
-    while(parent.tagName != "DIV")
-	parent = parent.parentNode;
-    parent = parent.parentNode;
-    sessionStorage.editnote = parent.getAttribute("id");
-    window.location = "editnote.html"
-}
+    var createDate = new Date(note.number);
+    var createStr = "Created date: " + createDate.getFullYear() + "-";
+    if(createDate.getMonth() < 9)
+	createStr +=  "0" + createDate.getMonth() + 1 + "-";
+    else
+	createStr += createDate.getMonth() + 1 + "-";
+    if(createDate.getDate() < 10)
+	createStr += "0" + createDate.getDate();
+    else
+	createStr += createDate.getDate();
+    $("#showNoteCreateDate").text(createStr);
 
-function onNoteMouseDown(e){
-    var parent = e.target;
-    while(parent.tagName != "DIV")
-	parent = parent.parentNode;
-    parent = parent.parentNode;
-    parent.firstChild.style.backgroundColor = "white";
-    parent.lastChild.style.backgroundColor = "white";
-    parent.firstChild.style.color = "black";
-    parent.lastChild.style.color = "black";
-}
+    var editDate = new Date(note.editDate);
+    var editStr = "Edit date: " + editDate.getFullYear() + "-";
+    if(editDate.getMonth() < 9)
+	editStr += "0" + editDate.getMonth() + 1 + "-";
+    else
+	editStr += editDate.getMonth() + 1 + "-";
+    if(editDate.getDate() < 10)
+	editStr += "0" + editDate.getDate();
+    else
+	editStr += editDate.getDate();
+    $("#showNoteEditDate").text(editStr);
 
-function onNoteMouseUp(e){
-    var parent = e.target;
-    while(parent.tagName != "DIV")
-	parent = parent.parentNode;
-    parent = parent.parentNode;
-    parent.firstChild.style.backgroundColor = "black";
-    parent.lastChild.style.backgroundColor = "black";
-    parent.firstChild.style.color = "#0099FF";
-    parent.lastChild.style.color = "white";
+    sessionStorage.note = JSON.stringify(note);
+    $.mobile.changePage($("#noteShowPage"));
 }
-/*
-function noteTextOverflows(text){
-    var table = document.getElementById("note_table");
-    var dateCell = table.firstChild.firstChild;
-    var ruler = document.getElementById("text_ruler");
-    ruler.innerHTML = text;
-
-    var width = table.offsetWidth - 10 - dateCell.offsetWidth - ruler.offsetWidth;
-    if(width >= 0)
-	return false;
-    return true;
-}
-*/
-window.onload=init;
