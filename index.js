@@ -6,24 +6,14 @@ $(document).ready(function(){
     $("#noneButton a").click(noneButtonClicked);
 
     $("#highButton a").click();
-//remove after testing
-    $("#testMenu").bind("taphold", function(){
-	$("#noteMenu").popup("open");
-    });
 
-    $("#testMenu").click(function(){
-	if($("#noteShowPage"))
-	    noteShowPageInit();
-	$.mobile.changePage($("#noteShowPage"));
-    });
-//end remove
     $("#callDeleteNote").click(function(){
 	$("#noteMenu").popup("close");
 	setTimeout(function(){	$("#deleteMenu").popup("open");}, 200);
     });
 
     $("#deleteButton").click(function(){
-	setTimeout(function(){ $("#deleteConfirm").popup("open");}, 200);
+	deleteNote();
     });
 
     $("#newButton").click(function(){
@@ -81,25 +71,6 @@ function init(){
 
     $("#totalCount").text(noNotes);
 
-    var noPrioNotes = 0;
-    if(sessionStorage.currentPrio == "medium"){
-	if(medium)
-	    noPrioNotes = medium.length;
-    }
-    else if(sessionStorage.currentPrio == "low"){
-	if(low)
-	    noPrioNotes = low.length;
-    }
-    else if(sessionStorage.currentPrio == "none"){
-	if(none)
-	    noPrioNotes = none.length;
-    }
-    else{
-	if(high)
-	    noPrioNotes = high.length;
-    }
-    $("#prioCount").text(noPrioNotes);
-
     fillTable();
 }
 
@@ -109,6 +80,7 @@ function fillTable(){
 	notesArray = localStorage.getItem(sessionStorage.currentPrio + "Notes");
     else
 	notesArray = localStorage.getItem("highNotes");
+    notesArray = JSON.parse(notesArray);
 
     $("#noteList li").each(function(){
 	if($(this).attr("data-role") != "list-divider")
@@ -126,8 +98,7 @@ function fillTable(){
     else
 	head.text("High Priority");
 
-    if(notesArray){
-	notesArray = JSON.parse(notesArray);
+    if(notesArray.length){
 	$("#prioCount").text(notesArray.length);
 	var ulList = $("#noteList");
 	for(var i=0; i<notesArray.length; i++){
@@ -138,9 +109,9 @@ function fillTable(){
 	    var d = new Date(notesArray[i].editDate);
 	    var dStr = d.getFullYear() + "-";
 	    if(d.getMonth < 10)
-		dStr += "0" + d.getMonth() + "-";
+		dStr += "0" + (d.getMonth() + 1)  + "-";
 	    else
-		dStr += d.getMonth() + "-";
+		dStr += (d.getMonth() + 1) + "-";
 	    if(d.getDate() < 10)
 		dStr += "0" + d.getDate();
 	    else
@@ -155,6 +126,7 @@ function fillTable(){
 
 	    li.click(noteShowPageInit);
 	    li.bind("taphold", function(){
+		sessionStorage.note = JSON.stringify(getNote($(this).attr("id")));
 		$("#noteMenu").popup("open");
 	    });
 
@@ -179,7 +151,47 @@ function notePageInit(){
 	$("#noteDatesDiv").hide();
     }
     else{
+	var note = JSON.parse(sessionStorage.note);
 	title = "Edit Note";
+	$("#text").val(note.text);
+	
+	$("#selectPrio").removeAttr("selected");
+	if(sessionStorage.currentPrio == "medium")
+	    $("#selectPrio").children("[value='medium']").attr("selected", "selected");
+	else if(sessionStorage.currentPrio == "low")
+	    $("#selectPrio").children("[value='low']").attr("selected", "selected");
+	else if(sessionStorage.currentPrio == "none")
+	    $("#selectPrio").children("[value='none']").attr("selected", "selected");
+	else
+	    $("#selectPrio").children("[value='high']").attr("selected", "selected");
+	if($("#header").hasClass("ui-header"))
+	    $("#selectPrio").selectmenu("refresh", true);
+
+	var cDate = new Date(note.number);
+	var cDateStr = "Created date: " + cDate.getFullYear() + "-";
+	if(cDate.getMonth() < 9)
+	    cDateStr += "0" + (cDate.getMonth() + 1) + "-";
+	else
+	    cDateStr += (cDate.getMonth() + 1) + "-";
+	if(cDate.getDate() < 10)
+	    cDateStr += "0" + cDate.getDate();
+	else
+	    cDateStr += cDate.getDate();
+
+	var eDate = new Date(note.editDate);
+	var eDateStr = "Edit date: " + eDate.getFullYear() + "-";
+	if(eDate.getMonth() < 9)
+	    eDateStr += "0" + (eDate.getMonth() + 1) + "-";
+	else
+	    eDateStr += (eDate.getMonth() + 1) + "-";
+	if(eDate.getDate() < 10)
+	    eDateStr += "0" + eDate.getDate();
+	else
+	    eDateStr += eDate.getDate();
+
+	$("#noteCreateDate").text(cDateStr);
+	$("#noteEditDate").text(eDateStr);
+
 	$("#noteDatesDiv").show();
     }
  
@@ -226,12 +238,32 @@ function saveNote(){
 	    notes = localStorage.getItem(prio + "Notes");
 	    notes = JSON.parse(notes);
 	}
-	
-	if(!sessionStorage.editNote){
+
+	if(sessionStorage.notePage == "new"){
 	    notes.push(note);
 	}
 	else{
-	    //editing a note...replace old note
+	    var oldNote = JSON.parse(sessionStorage.note);
+	    note.number = oldNote.number;
+	    note.editDate = date;
+	    var newNotes = new Array();
+	    var notesArray = localStorage.getItem(sessionStorage.currentPrio + "Notes");
+	    notesArray = JSON.parse(notesArray);
+
+	    for(var i=0; i<notesArray.length; i++){
+		if(note.number != notesArray[i].number)
+		    newNotes.push(notesArray[i]);
+	    }
+
+	    if(prio != sessionStorage.currentPrio){
+		localStorage.setItem(sessionStorage.currentPrio + "Notes",
+				       JSON.stringify(newNotes));
+		notes.push(note);
+	    }
+	    else{
+		newNotes.push(note);
+		notes = newNotes;
+	    }
 	}
 
 	localStorage.setItem(prio + "Notes", JSON.stringify(notes));
@@ -283,9 +315,9 @@ function noteShowPageInit(){
     var createDate = new Date(note.number);
     var createStr = "Created date: " + createDate.getFullYear() + "-";
     if(createDate.getMonth() < 9)
-	createStr +=  "0" + createDate.getMonth() + 1 + "-";
+	createStr +=  "0" + (createDate.getMonth() + 1) + "-";
     else
-	createStr += createDate.getMonth() + 1 + "-";
+	createStr += (createDate.getMonth() + 1) + "-";
     if(createDate.getDate() < 10)
 	createStr += "0" + createDate.getDate();
     else
@@ -295,9 +327,9 @@ function noteShowPageInit(){
     var editDate = new Date(note.editDate);
     var editStr = "Edit date: " + editDate.getFullYear() + "-";
     if(editDate.getMonth() < 9)
-	editStr += "0" + editDate.getMonth() + 1 + "-";
+	editStr += "0" + (editDate.getMonth() + 1) + "-";
     else
-	editStr += editDate.getMonth() + 1 + "-";
+	editStr += (editDate.getMonth() + 1) + "-";
     if(editDate.getDate() < 10)
 	editStr += "0" + editDate.getDate();
     else
@@ -306,4 +338,55 @@ function noteShowPageInit(){
 
     sessionStorage.note = JSON.stringify(note);
     $.mobile.changePage($("#noteShowPage"));
+}
+
+function deleteNote(){
+    var note = JSON.parse(sessionStorage.note);
+    if(note){
+	var oldNotes;
+	var newNotes = new Array();
+	if(sessionStorage.currentPrio == "medium")
+	    oldNotes = localStorage.getItem("mediumNotes");
+	else if(sessionStorage.currentPrio == "low")
+	    oldNotes = localStorage.getItem("lowNotes");
+	else if(sessionStorage.currentPrio == "none")
+	    oldNotes = localStorage.getItem("noneNotes");
+	else
+	    oldNotes = localStorage.getItem("highNotes");
+
+	oldNotes = JSON.parse(oldNotes);
+	var noteFound;
+	for(var i=0; i<oldNotes.length; i++){
+	    if(note.number != oldNotes[i].number)
+		newNotes.push(oldNotes[i]);
+	    else
+		noteFound = true;
+	}
+
+	localStorage.setItem(sessionStorage.currentPrio + "Notes", JSON.stringify(newNotes));
+	init();
+
+	setTimeout(function(){ $("#deleteConfirm").popup("open");}, 200);	
+	setTimeout(function(){ $("#deleteConfirm").popup("close");}, 3000);
+    }
+}
+
+function getNote(id){
+    var noteArray;
+    if(sessionStorage.currentPrio == "medium")
+	noteArray = localStorage.getItem("mediumNotes");
+    else if(sessionStorage.currentPrio == "low")
+	noteArray = localStorage.getItem("lowNotes");
+    else if(sessionStorage.currentPrio == "none")
+	noteArray = localStorage.getItem("noneNotes");
+    else
+	noteArray = localStorage.getItem("highNotes");
+
+    noteArray = JSON.parse(noteArray);
+    
+    var note;
+    for(var i=0; i<noteArray.length; i++){
+	if(id == noteArray[i].number)
+	    return noteArray[i];
+    }
 }
