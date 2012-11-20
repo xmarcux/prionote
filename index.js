@@ -28,6 +28,9 @@ $(document).ready(function(){
 	    notePageInit();
     });
 
+    $("#optionButton").click(optionPopupInit);
+    $("#buttonOkSort").click(sortChanged);
+
     $("#notePage").on("pageinit", notePageInit);
     $("#notePage").on("pagehide", function(){
 	$("#noteButtonCancel").removeClass("ui-btn-active");
@@ -81,6 +84,7 @@ function fillTable(){
     else
 	notesArray = localStorage.getItem("highNotes");
     notesArray = JSON.parse(notesArray);
+    sortNotes(notesArray);
 
     $("#noteList li").each(function(){
 	if($(this).attr("data-role") != "list-divider")
@@ -389,4 +393,96 @@ function getNote(id){
 	if(id == noteArray[i].number)
 	    return noteArray[i];
     }
+}
+
+function optionPopupInit(){
+    var sort = localStorage.sortOrder;
+
+    $("#selectSort").remove("selected");
+    if(sort == "reverseEditDate")
+	$("#selectSort").children("[value='reverseEditDate']").attr("selected", "selected");
+    else if(sort == "creationDate")
+	$("#selectSort").children("[value='creationDate']").attr("selected", "selected");
+    else if(sort == "reverseCreationDate")
+	$("#selectSort").children("[value='reverseCreationDate']").attr("selected", "selected");
+    else if(sort == "alphabetic")
+	$("#selectSort").children("[value='alphabeticOrder']").attr("selected", "selected");
+    else if(sort == "reverseAlphabetic")
+	$("#selectSort").children("[value='reverseAlphabeticOrder']").attr("selected", "selected");
+    else
+	$("#selectSort").children("[value='editDate']").attr("selected", "selected");
+
+    $("#selectSort").selectmenu("refresh", true);
+}
+
+function sortChanged(){
+    var option = $("#selectSort").val();
+    if(option == "reverseEditDate")
+	localStorage.sortOrder = "reverseEditDate";
+    else if(option == "creationDate")
+	localStorage.sortOrder = "creationDate";
+    else if(option == "reverseCreationDate")
+	localStorage.sortOrder = "reverseCreationDate";
+    else if(option == "alphabeticOrder")
+	localStorage.sortOrder = "alphabetic";
+    else if(option == "reverseAlphabeticOrder")
+	localStorage.sortOrder = "reverseAlphabetic";
+    else
+	localStorage.sortOrder = "editDate";
+
+    fillTable();
+}
+
+function sortNotes(notesArray){
+    var sortOrder = localStorage.getItem("sortOrder");
+    if(sortOrder == "reverseEditDate")
+	notesArray.sort(sortReverseEditDate);
+    else if(sortOrder == "creationDate")
+	notesArray.sort(sortCreationDate);
+    else if(sortOrder == "reverseCreationDate")
+	notesArray.sort(sortReverseCreationDate);
+    else if(sortOrder == "alphabetic")
+	notesArray.sort(sortAlphabetic);
+    else if(sortOrder == "reverseAlphabetic")
+	notesArray.sort(sortReverseAlphabetic);
+    else
+	notesArray.sort(sortEditDate);
+
+    return notesArray;
+}
+
+function sortEditDate(a, b){
+    return a.editDate - b.editDate;
+}
+
+function sortReverseEditDate(a, b){
+    return b.editDate - a.editDate;
+}
+
+function sortCreationDate(a, b){
+    return a.number - b.number;
+}
+
+function sortReverseCreationDate(a, b){
+    return b.number - a.number;
+}
+
+function sortAlphabetic(a, b){
+    var aLow = a.text.toLowerCase();
+    var bLow = b.text.toLowerCase();
+    if(aLow < bLow)
+	return -1;
+    else if(aLow > bLow)
+	return 1;
+    return 0;
+}
+
+function sortReverseAlphabetic(a, b){
+    var alpha = sortAlphabetic(a, b);
+    if(alpha == -1)
+	return 1;
+    else if(alpha == 1)
+	return -1;
+    return 0;
+    
 }

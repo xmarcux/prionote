@@ -36,7 +36,7 @@
       <div data-role="footer" data-id="headerFooter" data-position="fixed">
 	<div data-role="navbar">
 	  <ul>
-	    <li><a data-icon="gear" data-rel="popup" data-position-to="window" href="#optionPopup">Options</a></li>
+	    <li><a id="optionButton" data-icon="gear" data-rel="popup" data-position-to="window" href="#optionPopup">Options</a></li>
 	    <li><a id="newButton" data-icon="plus" href="#notePage">New note</a></li>
 	    <li><a data-icon="info" data-rel="popup" data-position-to="window" href="#about">About</a></li>
 	  </ul>
@@ -98,7 +98,7 @@
 	  </select>
 	  <center>
 	    <a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b">Cancel</a>
-	    <a href="#" data-role="button" data-inline="true" data-theme="b">OK</a>
+	    <a href="#" id="buttonOkSort"  data-role="button" data-inline="true" data-rel="back" data-theme="b">OK</a>
 	  </center>
 	</div>
       </div>
