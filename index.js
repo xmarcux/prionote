@@ -1,11 +1,12 @@
 $(document).ready(function(){
     init();
+    $("#allButton a").click(allButtonClicked);    
     $("#highButton a").click(highButtonClicked);
     $("#mediumButton a").click(mediumButtonClicked);
     $("#lowButton a").click(lowButtonClicked);
     $("#noneButton a").click(noneButtonClicked);
 
-    $("#highButton a").click();
+    $("#allButton a").click();
 
     $("#callDeleteNote").click(function(){
 	$("#noteMenu").popup("close");
@@ -39,6 +40,11 @@ $(document).ready(function(){
 
     $("#noteButtonSave").click(saveNote);
 
+    $("#noteButtonCancel").click(function(){
+	if($("#allButton a").hasClass("ui-btn-active"))
+	    sessionStorage.removeItem("currentPrio");
+    });
+
 
     $("#noteShowPage").on("pagehide", function(){
 	$("#noteShowButtonCancel").removeClass("ui-btn-active");
@@ -49,6 +55,11 @@ $(document).ready(function(){
 	sessionStorage.notePage = "edit";
 	if($("#noteHeaderText"))
 	    notePageInit();
+    });
+
+    $("#noteShowButtonCancel").click(function(){
+	if($("#allButton a").hasClass("ui-btn-active"))
+	    sessionStorage.removeItem("currentPrio");
     });
 });
 
@@ -79,11 +90,33 @@ function init(){
 
 function fillTable(){
     var notesArray;
-    if(sessionStorage.currentPrio)
+
+    if(sessionStorage.currentPrio != undefined){
 	notesArray = localStorage.getItem(sessionStorage.currentPrio + "Notes");
-    else
-	notesArray = localStorage.getItem("highNotes");
-    notesArray = JSON.parse(notesArray);
+	notesArray = JSON.parse(notesArray);
+    }
+    else{
+	var tempNotes = JSON.parse(localStorage.highNotes);
+	for(var i=0; i<tempNotes.length; i++)
+	    tempNotes[i].prio = "high";
+	notesArray = tempNotes;
+
+	tempNotes = JSON.parse(localStorage.mediumNotes);
+	for(var j=0; j<tempNotes.length; j++)
+	    tempNotes[j].prio = "medium";
+	notesArray = notesArray.concat(tempNotes);
+
+	tempNotes = JSON.parse(localStorage.lowNotes);
+	for(var k=0; k<tempNotes.length; k++)
+	    tempNotes[k].prio = "low";
+	notesArray = notesArray.concat(tempNotes);
+
+	tempNotes = JSON.parse(localStorage.noneNotes);
+	for(var l=0; l<tempNotes.length; l++)
+	    tempNotes[l].prio = "none";
+	notesArray = notesArray.concat(tempNotes);
+    }
+
     sortNotes(notesArray);
 
     $("#noteList li").each(function(){
@@ -99,8 +132,10 @@ function fillTable(){
 	head.text("Low Priority");
     else if(sessionStorage.currentPrio == "none")
 	head.text("None Priority");
-    else
+    else if(sessionStorage.currentPrio == "high")
 	head.text("High Priority");
+    else
+	head.text("All notes");
 
     if(notesArray.length){
 	$("#prioCount").text(notesArray.length);
@@ -126,10 +161,14 @@ function fillTable(){
 	    a.append(p);
 	    li.append(a);
 	    li.attr("id", notesArray[i].number);
+	    if(notesArray[i].prio != undefined)
+		li.attr("data-prio", notesArray[i].prio);
 	    ulList.append(li);
 
 	    li.click(noteShowPageInit);
 	    li.bind("taphold", function(){
+		if($(this).attr("data-prio"))
+		    sessionStorage.currentPrio = $(this).attr("data-prio");
 		sessionStorage.note = JSON.stringify(getNote($(this).attr("id")));
 		$("#noteMenu").popup("open");
 	    });
@@ -205,6 +244,11 @@ function notePageInit(){
     $("#noteHeaderText").text(title);
 }
 
+function allButtonClicked(){
+    sessionStorage.removeItem("currentPrio");
+    fillTable();
+}
+
 function highButtonClicked(){
     sessionStorage.currentPrio = "high";
     fillTable();
@@ -273,9 +317,11 @@ function saveNote(){
 	localStorage.setItem(prio + "Notes", JSON.stringify(notes));
 	sessionStorage.currentPrio = prio;
 	$("#" + prio + "Button a").click();
-
-	var noNotes = new Number($("#totalCount").text());
-	$("#totalCount").text(noNotes + 1);
+	
+	if(sessionStorage.notePage == "new"){
+	    var noNotes = new Number($("#totalCount").text());
+	    $("#totalCount").text(noNotes + 1);
+	}
 
 	$.mobile.changePage($("#mainPage"));
     }
@@ -285,6 +331,8 @@ function noteShowPageInit(){
     var id = $(this).attr("id");
     var note;
     var noteArray;
+    if($(this).attr("data-prio"))
+	sessionStorage.currentPrio = $(this).attr("data-prio");
     $("#selectPrioShow").removeAttr("selected");
     if(sessionStorage.currentPrio == "medium"){
 	notesArray = localStorage.getItem("mediumNotes");
@@ -368,6 +416,9 @@ function deleteNote(){
 	}
 
 	localStorage.setItem(sessionStorage.currentPrio + "Notes", JSON.stringify(newNotes));
+
+	if($("#allButton a").hasClass("ui-btn-active"))
+	    sessionStorage.removeItem("currentPrio");
 	init();
 
 	setTimeout(function(){ $("#deleteConfirm").popup("open");}, 200);	
