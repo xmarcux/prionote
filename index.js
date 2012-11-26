@@ -96,28 +96,37 @@ function fillTable(){
 	notesArray = JSON.parse(notesArray);
     }
     else{
-	var tempNotes = JSON.parse(localStorage.highNotes);
-	for(var i=0; i<tempNotes.length; i++)
-	    tempNotes[i].prio = "high";
-	notesArray = tempNotes;
+	if(localStorage.highNotes != undefined){
+	    var tempNotes = JSON.parse(localStorage.highNotes);
+	    for(var i=0; i<tempNotes.length; i++)
+		tempNotes[i].prio = "high";
+	    notesArray = tempNotes;
+	}
 
-	tempNotes = JSON.parse(localStorage.mediumNotes);
-	for(var j=0; j<tempNotes.length; j++)
-	    tempNotes[j].prio = "medium";
-	notesArray = notesArray.concat(tempNotes);
+	if(localStorage.mediumNotes != undefined){
+	    tempNotes = JSON.parse(localStorage.mediumNotes);
+	    for(var j=0; j<tempNotes.length; j++)
+		tempNotes[j].prio = "medium";
+	    notesArray = notesArray.concat(tempNotes);
+	}
 
-	tempNotes = JSON.parse(localStorage.lowNotes);
-	for(var k=0; k<tempNotes.length; k++)
-	    tempNotes[k].prio = "low";
-	notesArray = notesArray.concat(tempNotes);
+	if(localStorage.lowNotes != undefined){
+	    tempNotes = JSON.parse(localStorage.lowNotes);
+	    for(var k=0; k<tempNotes.length; k++)
+		tempNotes[k].prio = "low";
+	    notesArray = notesArray.concat(tempNotes);
+	}
 
-	tempNotes = JSON.parse(localStorage.noneNotes);
-	for(var l=0; l<tempNotes.length; l++)
-	    tempNotes[l].prio = "none";
-	notesArray = notesArray.concat(tempNotes);
+	if(localStorage.noneNotes != undefined){
+	    tempNotes = JSON.parse(localStorage.noneNotes);
+	    for(var l=0; l<tempNotes.length; l++)
+		tempNotes[l].prio = "none";
+	    notesArray = notesArray.concat(tempNotes);
+	}
     }
 
-    sortNotes(notesArray);
+    if(notesArray)
+	sortNotes(notesArray);
 
     $("#noteList li").each(function(){
 	if($(this).attr("data-role") != "list-divider")
@@ -137,7 +146,7 @@ function fillTable(){
     else
 	head.text("All notes");
 
-    if(notesArray.length){
+    if(notesArray){
 	$("#prioCount").text(notesArray.length);
 	var ulList = $("#noteList");
 	for(var i=0; i<notesArray.length; i++){

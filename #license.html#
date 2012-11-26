@@ -10,6 +10,7 @@
 <body>
   <div data-role="page">
     <div data-role="header" data-id="headerFooter" data-position="fixed">
+      <!--<a href="#" data-role="button" data-icon="arrow-l" data-inline="true" data-theme="b" data-rel="back">Back</a>-->
       <center><p>Prio Note - GNU GPL V3</p></center>
     </div>
     <div data-role="content">
