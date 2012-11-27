@@ -1,5 +1,15 @@
 $(document).ready(function(){
     init();
+
+    document.oncontextmenu = function(){return false;};
+
+    $("#noteMenu").on({
+	popupbeforeposition: function () {
+            $('.ui-popup-screen').off();
+	}
+    });
+
+
     $("#allButton a").click(allButtonClicked);    
     $("#highButton a").click(highButtonClicked);
     $("#mediumButton a").click(mediumButtonClicked);
@@ -146,7 +156,7 @@ function fillTable(){
     else
 	head.text("All notes");
 
-    if(notesArray){
+    if(notesArray && notesArray.length > 0){
 	$("#prioCount").text(notesArray.length);
 	var ulList = $("#noteList");
 	for(var i=0; i<notesArray.length; i++){
@@ -175,7 +185,7 @@ function fillTable(){
 	    ulList.append(li);
 
 	    li.click(noteShowPageInit);
-	    li.bind("taphold", function(){
+	    li.bind("taphold", function(evt){
 		if($(this).attr("data-prio"))
 		    sessionStorage.currentPrio = $(this).attr("data-prio");
 		sessionStorage.note = JSON.stringify(getNote($(this).attr("id")));

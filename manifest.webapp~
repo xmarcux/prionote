@@ -1,0 +1,15 @@
+{
+	"name": "Prio Note",
+	"description": "Priority for your notes",
+	"launch_path": "/",
+	"icons": {
+
+	},
+	"developer": {
+		     "name": "Marcus Pedersén",
+		     "url": "http://www.marcux.org"
+	},
+	"default_locale": "en",
+	"version": "1.0.0",
+	"fullscreen": "true"
+}
