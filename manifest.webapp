@@ -1,4 +1,5 @@
 {
+	"version": "1.0.0",
 	"name": "Prio Note",
 	"description": "Priority for your notes",
 	"launch_path": "/",
@@ -16,5 +17,6 @@
 	},
 	"default_locale": "en",
 	"version": "1.0.0",
+	"orientation": "portrait,landscape-secondary",
 	"fullscreen": "true"
 }
