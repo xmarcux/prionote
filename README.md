@@ -1,4 +1,4 @@
-    PrioNote helps you order your notes.
+    PrioNote - Priority for your notes.
     Copyright (C) 2012- Marcus Pedersén
 
     This program is free software: you can redistribute it and/or modify
