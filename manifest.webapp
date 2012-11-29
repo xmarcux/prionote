@@ -1,0 +1,23 @@
+{
+	"version": "1.0.0",
+	"name": "Prio Note",
+	"description": "Priority for your notes",
+	"launch_path": "/",
+	"appcache_path":"/prionote.manifest",
+	"icons": {
+		 "30": "/img/prionote_icon_30.png",
+		 "32": "/img/prionote_icon_32.png",
+		 "48": "/img/prionote_icon_48.png",
+		 "60": "/img/prionote_icon_60.png",
+		 "64": "/img/prionote_icon_64.png",
+		 "128": "/img/prionote_icon_128.png"
+	},
+	"developer": {
+		     "name": "Marcus Pedersén",
+		     "url": "http://www.marcux.org"
+	},
+	"default_locale": "en",
+	"version": "1.0.0",
+	"orientation": "portrait,landscape-secondary",
+	"fullscreen": "true"
+}
