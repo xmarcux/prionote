@@ -9,7 +9,6 @@ $(document).ready(function(){
 	}
     });
 
-
     $("#allButton a").click(allButtonClicked);    
     $("#highButton a").click(highButtonClicked);
     $("#mediumButton a").click(mediumButtonClicked);
@@ -74,6 +73,22 @@ $(document).ready(function(){
 });
 
 function init(){
+    if(!navigator.mozApps)
+	$("#installButton").remove();
+    else{
+	var request = navigator.mozApps.getSelf();
+	request.onsuccess = function(){
+	    if(request.result)
+		$("#installButton").remove();
+	    else
+		$("#installButton").click(install);
+	};
+
+	request.onerror = function(){
+	    alert("Error checking installation status: " + this.error.message);
+	}
+    }
+
     var high = localStorage.getItem("highNotes");
     high = JSON.parse(high);
     var medium = localStorage.getItem("mediumNotes");
@@ -199,6 +214,16 @@ function fillTable(){
 	$("#noteListDiv").append("<p><strong>There are no notes to show...<strong></p>");
 	$("#prioCount").text("0");
     }
+}
+
+function install(){
+    var request = navigator.mozApps.install("http://xmarcux.github.com/prionote/manifest.webapp");
+    request.onsuccess = function(){
+	alert("Prio Note successfully installed!");
+    };
+    request.onerror = function(){
+	alert("Error installing Prio Note: " + this.error.name);
+    };
 }
 
 function notePageInit(){
