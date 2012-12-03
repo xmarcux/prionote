@@ -18,6 +18,6 @@
 	},
 	"default_locale": "en",
 	"version": "1.0.0",
-	"orientation": "portrait,landscape-secondary",
+	"orientation": ["portrait","landscape-secondary"],
 	"fullscreen": "true"
 }
