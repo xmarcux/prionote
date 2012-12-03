@@ -220,9 +220,27 @@ function install(){
     var request = navigator.mozApps.install("http://xmarcux.github.com/prionote/manifest.webapp");
     request.onsuccess = function(){
 	alert("Prio Note successfully installed!");
+	$("#installButton").remove();
     };
     request.onerror = function(){
 	alert("Error installing Prio Note: " + this.error.name);
+    };
+}
+
+//For future use, not used today
+function uninstall(){
+    var request = navigator.mozApps.getInstalled();
+    request.onsuccess = function(){
+	for(var i=0; i<request.result.length; i++){
+	    if(request.result[i].manifest.name == "Prio Note"){
+		request.result[i].uninstall();
+		alert("Prio Note successfully uninstalled!");
+		break;
+	    }
+	}
+    };
+    request.onerror = function(){
+	alert("Error uninstalling Prio Note: " + this.error.name);
     };
 }
 
