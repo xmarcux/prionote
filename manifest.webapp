@@ -2,7 +2,7 @@
 	"version": "1.0.0",
 	"name": "Prio Note",
 	"description": "Priority for your notes",
-	"launch_path": "/",
+	"launch_path": "/prionote",
 	"appcache_path":"/prionote.manifest",
 	"icons": {
 		 "30": "/img/prionote_icon_30.png",
