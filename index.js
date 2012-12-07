@@ -191,7 +191,7 @@ function fillTable(){
 	    else
 		dStr += (d.getMonth() + 1) + "-";
 	    if(d.getDate() < 10)
-		dStr += "0" + d.getDate();
+		dStr += "0" + d.getDate() + " ";
 	    else
 		dStr += d.getDate() + " ";
 
