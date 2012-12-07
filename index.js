@@ -179,7 +179,12 @@ function fillTable(){
 	    var a = $("<a href='#' id='" + notesArray[i].number + "'></a>");
 	    var p = $("<p class='ui-li-aside'></p>");
 
-	    var d = new Date(notesArray[i].editDate);
+	    var d;
+	    if(localStorage.sortOrder == "creationDate" ||
+	       localStorage.sortOrder == "reverseCreationDate")
+		d = new Date(notesArray[i].number);
+	    else
+		d = new Date(notesArray[i].editDate);
 	    var dStr = d.getFullYear() + "-";
 	    if(d.getMonth < 10)
 		dStr += "0" + (d.getMonth() + 1)  + "-";
@@ -188,7 +193,17 @@ function fillTable(){
 	    if(d.getDate() < 10)
 		dStr += "0" + d.getDate();
 	    else
-		dStr += d.getDate();
+		dStr += d.getDate() + " ";
+
+	    if(d.getHours() < 10)
+		dStr += "0" + d.getHours() + ":";
+	    else
+		dStr += d.getHours() + ":";
+
+	    if(d.getMinutes() < 10)
+		dStr += "0" + d.getMinutes();
+	    else
+		dStr += d.getMinutes();
 
 	    a.html("<h1></h1>" + notesArray[i].text);
 	    p.html("<strong>" + dStr + "</strong>");
@@ -279,9 +294,17 @@ function notePageInit(){
 	else
 	    cDateStr += (cDate.getMonth() + 1) + "-";
 	if(cDate.getDate() < 10)
-	    cDateStr += "0" + cDate.getDate();
+	    cDateStr += "0" + cDate.getDate() + " ";
 	else
-	    cDateStr += cDate.getDate();
+	    cDateStr += cDate.getDate() + " ";
+	if(cDate.getHours() < 10)
+	    cDateStr += "0" + cDate.getHours() + ":";
+	else
+	    cDateStr += cDate.getHours() + ":";
+	if(cDate.getMinutes() < 10)
+	    cDateStr += "0" + cDate.getMinutes();
+	else
+	    cDateStr += cDate.getMinutes();
 
 	var eDate = new Date(note.editDate);
 	var eDateStr = "Edit date: " + eDate.getFullYear() + "-";
@@ -290,9 +313,17 @@ function notePageInit(){
 	else
 	    eDateStr += (eDate.getMonth() + 1) + "-";
 	if(eDate.getDate() < 10)
-	    eDateStr += "0" + eDate.getDate();
+	    eDateStr += "0" + eDate.getDate() + " ";
 	else
-	    eDateStr += eDate.getDate();
+	    eDateStr += eDate.getDate() + " ";
+	if(eDate.getHours() < 10)
+	    eDateStr += "0" + eDate.getHours() + ":";
+	else
+	    eDateStr += eDate.getHours() + ":";
+	if(eDate.getMinutes() < 10)
+	    eDateStr += "0" + eDate.getMinutes();
+	else
+	    eDateStr += eDate.getMinutes();
 
 	$("#noteCreateDate").text(cDateStr);
 	$("#noteEditDate").text(eDateStr);
@@ -433,9 +464,17 @@ function noteShowPageInit(){
     else
 	createStr += (createDate.getMonth() + 1) + "-";
     if(createDate.getDate() < 10)
-	createStr += "0" + createDate.getDate();
+	createStr += "0" + createDate.getDate() + " ";
     else
-	createStr += createDate.getDate();
+	createStr += createDate.getDate() + " ";
+    if(createDate.getHours() < 10)
+	createStr += "0" + createDate.getHours() + ":";
+    else
+	createStr += createDate.getHours() + ":";
+    if(createDate.getMinutes() < 10)
+	createStr += "0" + createDate.getMinutes();
+    else
+	createStr += createDate.getMinutes();
     $("#showNoteCreateDate").text(createStr);
 
     var editDate = new Date(note.editDate);
@@ -445,9 +484,17 @@ function noteShowPageInit(){
     else
 	editStr += (editDate.getMonth() + 1) + "-";
     if(editDate.getDate() < 10)
-	editStr += "0" + editDate.getDate();
+	editStr += "0" + editDate.getDate() + " ";
     else
-	editStr += editDate.getDate();
+	editStr += editDate.getDate() + " ";
+    if(editDate.getHours() < 10)
+	editStr += "0" + editDate.getHours() + ":";
+    else
+	editStr += editDate.getHours() + ":";
+    if(editDate.getMinutes() < 10)
+	editStr += "0" + editDate.getMinutes();
+    else
+	editStr += editDate.getMinutes();
     $("#showNoteEditDate").text(editStr);
 
     sessionStorage.note = JSON.stringify(note);
