@@ -288,7 +288,7 @@ function notePageInit(){
 	    $("#selectPrio").selectmenu("refresh", true);
 
 	var cDate = new Date(note.number);
-	var cDateStr = "Created date: " + cDate.getFullYear() + "-";
+	var cDateStr = cDate.getFullYear() + "-";
 	if(cDate.getMonth() < 9)
 	    cDateStr += "0" + (cDate.getMonth() + 1) + "-";
 	else
@@ -307,7 +307,7 @@ function notePageInit(){
 	    cDateStr += cDate.getMinutes();
 
 	var eDate = new Date(note.editDate);
-	var eDateStr = "Edit date: " + eDate.getFullYear() + "-";
+	var eDateStr = eDate.getFullYear() + "-";
 	if(eDate.getMonth() < 9)
 	    eDateStr += "0" + (eDate.getMonth() + 1) + "-";
 	else
@@ -458,7 +458,7 @@ function noteShowPageInit(){
     $("#textShow").text(note.text);
 
     var createDate = new Date(note.number);
-    var createStr = "Created date: " + createDate.getFullYear() + "-";
+    var createStr = createDate.getFullYear() + "-";
     if(createDate.getMonth() < 9)
 	createStr +=  "0" + (createDate.getMonth() + 1) + "-";
     else
@@ -478,7 +478,7 @@ function noteShowPageInit(){
     $("#showNoteCreateDate").text(createStr);
 
     var editDate = new Date(note.editDate);
-    var editStr = "Edit date: " + editDate.getFullYear() + "-";
+    var editStr = editDate.getFullYear() + "-";
     if(editDate.getMonth() < 9)
 	editStr += "0" + (editDate.getMonth() + 1) + "-";
     else

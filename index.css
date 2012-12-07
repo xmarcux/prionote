@@ -1,18 +1,18 @@
-/*.ui-header .ui-navbar li a:active{
-    background: red;
-}*/
-
 .highButtonClass .ui-btn-active {
-    background: #FF3333;/*red;*/
+    background: #FF3333;/*red*/
 }
 
 .mediumButtonClass .ui-btn-active {
-    background: #FFCC00;/*yellow;*/
+    background: #FFCC00;/*yellow*/
     color: black;
 }
 
 .lowButtonClass .ui-btn-active {
-    background: #66CC00; /*green;*/
+    background: #66CC00; /*green*/
     color: black;
+}
+
+.tableMargin td{
+    padding-right: 30px;
 }
 
