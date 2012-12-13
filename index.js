@@ -455,7 +455,60 @@ function noteShowPageInit(){
 	    break;
 	}
     }
-    $("#textShow").text(note.text);
+    
+    var strText = note.text;
+    while(strText.indexOf("\n") != -1)
+	strText = strText.replace("\n", "<br/>");
+    /* TODO
+    var noStr = strText.match(/\d{2,}/g);
+    alert(strText.search(/\s\d{1,}[\-\.]*\d{1,}[\-]*\d{0,}[\-]*\d{0,}[\-]*\d{0,}[\-]*\d{0,}[\-]*\d{0,}[\-]*\d{0,}[\-]*\d{0,}\s/g));
+    if(noStr.length > 0){
+	for(var i=0; i < noStr.length; i++){
+	    strText = strText.replace(noStr[i], "<a href='#'>" + noStr[i] + "</a>");
+	    alert(strText);
+	}
+    }
+
+    var linkStr = strText.match(/(http:\/\/)*w{0,3}\.{0,1}[a-z\d\/]{1,}\.{1,1}[a-z\d\/]{1,}\.{0,1}[a-z\d\/]{1,}/gi);
+    var noLinkStr = strText.match(/(http:\/\/)*\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g);
+
+    if(linkStr){
+	var repLinkStr = [];
+
+	for(var i=0; i < linkStr.length; i++){
+	    if(linkStr[i].indexOf("http") == 0)
+		repLinkStr[i] = "<a href='" + linkStr[i] + "' target='_blank'>" + linkStr[i] + "</a>";
+	    else
+		repLinkStr[i] = "<a href='http://" + linkStr[i] + "' target='_blank'>" + linkStr[i] + "</a>";
+	}
+
+	for(var i=0; i < linkStr.length; i++){
+	    var length1 = 0;
+	    var length2 = 1;
+	    var odd = true;
+	    strText = strText.replace(linkStr[i], repLinkStr[i]);
+	}
+    }
+
+    if(noLinkStr){
+	var repNoLinkStr = [];
+	for(var i=0; i < noLinkStr.length; i++){
+	    if(noLinkStr[i].indexOf("http") == 0)
+		repNoLinkStr[i] = "<a href='" + noLinkStr[i] + "' target='_blank'>" + noLinkStr[i] + "</a>";
+	    else
+		repNoLinkStr[i] = "<a href='http://" + noLinkStr[i] + "' target='_blank'>" + noLinkStr[i] + "</a>";
+	}
+
+	for(var i=0; i < noLinkStr.length; i++){
+	    var length1 = 0;
+	    var length2 = 1;
+	    var odd = true;
+	    strText = strText.replace("192.168.1.1", repNoLinkStr[i]);//noLinkStr[i]
+	}
+    }
+*/
+
+    $("#textShow").html(strText);
 
     var createDate = new Date(note.number);
     var createStr = createDate.getFullYear() + "-";

@@ -16,3 +16,11 @@
     padding-right: 30px;
 }
 
+#textShow {
+    border-color: #C0C0C0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 3px 3px 2px #777;
+}
