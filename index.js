@@ -186,7 +186,7 @@ function fillTable(){
 	    else
 		d = new Date(notesArray[i].editDate);
 	    var dStr = d.getFullYear() + "-";
-	    if(d.getMonth < 10)
+	    if(d.getMonth() < 10)
 		dStr += "0" + (d.getMonth() + 1)  + "-";
 	    else
 		dStr += (d.getMonth() + 1) + "-";
