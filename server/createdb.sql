@@ -6,7 +6,7 @@
 
 
 /* Remove the existing tables and
-   database if they alerady exists.
+   database if they already exists.
 */
 
 DROP DATABASE IF EXISTS prionote;
@@ -18,7 +18,8 @@ USE prionote;
 CREATE TABLE user (
        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
        uname VARCHAR(255) NOT NULL,
-       pword VARCHAR(255) NOT NULL
+       pword VARCHAR(255) NOT NULL,
+       mail VARCHAR(255)
 );
 
 CREATE TABLE notes (
@@ -30,10 +31,10 @@ CREATE TABLE notes (
 );
 
 /* Populate user table with values */
-INSERT INTO user (uname, pword) VALUES ("marcux", "mpassword");
-INSERT INTO user (uname, pword) VALUES ("putte", "ppassword");
-INSERT INTO user (uname, pword) VALUES ("svenne", "spassword");
-INSERT INTO user (uname, pword) VALUES ("lotta", "lpassword");
+INSERT INTO user (uname, pword, mail) VALUES ("marcux", "mpassword", "marcux@marcux.org");
+INSERT INTO user (uname, pword, mail) VALUES ("putte", "ppassword", "putte@marcux.org");
+INSERT INTO user (uname, pword, mail) VALUES ("svenne", "spassword", "svenne@marcux.org");
+INSERT INTO user (uname, pword, mail) VALUES ("lotta", "lpassword", "lotta@marcux.org");
 
 /* Populate notes table with values */
 INSERT INTO notes (createId, edit, text, prio, userId)
