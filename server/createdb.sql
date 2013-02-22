@@ -23,8 +23,9 @@ CREATE TABLE user (
 );
 
 CREATE TABLE notes (
-       createId INT NOT NULL PRIMARY KEY,
-       edit INT,
+       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       createId BIGINT UNSIGNED NOT NULL,
+       edit BIGINT UNSIGNED,
        text TEXT NOT NULL,
        prio INT NOT NULL,
        userId INT NOT NULL
@@ -35,6 +36,7 @@ INSERT INTO user (uname, pword, mail) VALUES ("marcux", "mpassword", "marcux@mar
 INSERT INTO user (uname, pword, mail) VALUES ("putte", "ppassword", "putte@marcux.org");
 INSERT INTO user (uname, pword, mail) VALUES ("svenne", "spassword", "svenne@marcux.org");
 INSERT INTO user (uname, pword, mail) VALUES ("lotta", "lpassword", "lotta@marcux.org");
+INSERT INTO user (uname, pword, mail) VALUES ("nonotes", "npassword", "nonotes@marcux.org");
 
 /* Populate notes table with values */
 INSERT INTO notes (createId, edit, text, prio, userId)
