@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# cache manifest version 1.1.1
+# cache manifest version 2.0.0
 
 CACHE:
 index.html
@@ -9,12 +9,9 @@ LICENSE
 license.html
 manifest.webapp
 note.js
-newnote.html
-newnote.js
-newnote.css
-jquery/jquery-1.8.2.min.js
-jquery/jquery.mobile-1.2.0.min.css
-jquery/jquery.mobile-1.2.0.min.js
+jquery/jquery-1.9.1.min.js
+jquery/jquery.mobile-1.3.0.min.css
+jquery/jquery.mobile-1.3.0.min.js
 jquery/images/ajax-loader.gif
 jquery/images/icons-18-black.png
 jquery/images/icons-18-white.png
