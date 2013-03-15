@@ -17,9 +17,8 @@ USE prionote;
 
 CREATE TABLE user (
        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-       uname VARCHAR(255) NOT NULL,
-       pword VARCHAR(255) NOT NULL,
-       mail VARCHAR(255)
+       loggedIn VARCHAR(255),
+       mail VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE notes (
@@ -32,11 +31,11 @@ CREATE TABLE notes (
 );
 
 /* Populate user table with values */
-INSERT INTO user (uname, pword, mail) VALUES ("marcux", "mpassword", "marcux@marcux.org");
-INSERT INTO user (uname, pword, mail) VALUES ("putte", "ppassword", "putte@marcux.org");
-INSERT INTO user (uname, pword, mail) VALUES ("svenne", "spassword", "svenne@marcux.org");
-INSERT INTO user (uname, pword, mail) VALUES ("lotta", "lpassword", "lotta@marcux.org");
-INSERT INTO user (uname, pword, mail) VALUES ("nonotes", "npassword", "nonotes@marcux.org");
+INSERT INTO user (loggedIn, mail) VALUES ("false", "marcux@marcux.org");
+INSERT INTO user (loggedIn, mail) VALUES ("false", "putte@marcux.org");
+INSERT INTO user (loggedIn, mail) VALUES ("false", "svenne@marcux.org");
+INSERT INTO user (loggedIn, mail) VALUES ("false", "lotta@marcux.org");
+INSERT INTO user (loggedIn, mail) VALUES ("false", "nonotes@marcux.org");
 
 /* Populate notes table with values */
 INSERT INTO notes (createId, edit, text, prio, userId)

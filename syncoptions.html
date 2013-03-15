@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Prionote - Sync options</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="jquery/jquerymobile1.3.0/jquery.mobile-1.3.0.min.css"/>
+    <link rel="stylesheet" href="persona/persona-buttons.css"/>
+    <script src="jquery/jquerymobile1.3.0/jquery-1.9.1.min.js"></script>
+    <script src="jquery/jquerymobile1.3.0/jquery.mobile-1.3.0.min.js"></script>
+    <script src="syncoptions.js"></script>
+  </head>
+  <body>
+    <div id="optionPage" data-role="page" data-add-back-btn="true">
+      <div data-role="header" data-positon="fixed" data-add-back-btn="true">
+	<a href="#" id="backButton" data-role="button" data-icon="back" data-theme="b" data-rel="back">Back</a>
+	<center><p>Sync options</p></center>
+      </div>
+      <div data-role="content">
+	  <div>
+	    <center>
+	    <b>Syncronize</b>
+	      <table>
+		<tr>
+		  <td>
+		    Syncronize your notes to be able to see your notes on all firefox applications.<br/>
+		    Click "Sign in" to login with persona.<br/>
+		    If you do not have a persona account you will be redirected to create one.<br/>
+		    To stop syncronize toggle button to off.</br>
+		    To logout click "Sign out", you will have to sign in again to syncronize again.
+		  </td>
+		</tr>
+	      </table>
+	    </center>
+	  </div>
+	  <br/>
+	  <br/>
+	  <center>
+	  <div class="wrap">
+	    <a href="#" class="persona-button dark" id="personaButton"><span id="personaButtonTxt">Sign in</span></a>
+	  </div>
+	  </center>
+	  <br/>
+	  <center>
+	    <form>
+	      <label for="toggleSyncSwitch">Activate sync:</label>
+	      <select id="toggleSyncSwitch" data-role="slider" disabled="disabled">
+		<option id="toggleSyncSwitchOff" value="off">Off</option>
+		<option id="toggleSyncSwitchOn" value="on">On</option>
+	      </select>
+	    </form>
+	  </center>
+	  </div>
+      </div>
+    </div>
+    <script src="https://login.persona.org/include.js"></script>
+  </body>
+</html>

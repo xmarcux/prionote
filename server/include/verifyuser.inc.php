@@ -5,18 +5,64 @@
      * and contains the mail address if ok.
      */
 
+if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
     $userobj = new stdClass;
     $userobj->mail = -2;
 
-    if(isset($_COOKIE['loggedin'])){
-	$userobj->mail = 'OK';
-	$userobj->id = mysqli_real_escape_string($link, $_COOKIE['loggedin']);
+    if(isset($_POST['assertion'])){
+        $url = "https://verifier.login.persona.org/verify";
+    	$assert = $_POST['assertion'];
+
+	$params = 'assertion=' . urlencode($assert) . '&audience=' .
+               	  urlencode('https://manu4.manufrog.com/~macmarcu:443');
+        $ch = curl_init();
+
+    	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_POST, 2);
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+    	$result = curl_exec($ch);
+	$result = json_decode($result);
+    	curl_close($ch);
+
+	if($result->status == "okey"){
+	    $mail = mysqli_real_escape_string($link, $result->email);
+	    $assert = mysqli_real_escape_string($link, $assert);
+
+	    $sql_exist = "SELECT id FROM user WHERE mail='$mail';";
+	    $result_exist = mysqli_query($link, $sql_exist);
+	    if(!$result_exist){
+		$result->error = "Could not read from database.";
+	    }
+	    else if(mysqli_num_rows($result_exist) == 0){
+	    	 $sql_new_user = "INSERT INTO user (loggedIn, mail) VALUES ('$assert', '$mail');";
+		 if(!mysqli_query($link, $sql_new_user)){
+		     $result->error = "Could not insert new user in database."
+		 }
+	    }
+	    else{
+		$sql_logged_in = "UPDATE user SET loggedIn='$assert' WHERE mail='$mail';";
+		if(!mysqli_query($link, $sql_logged_in)){
+		    $result->error = "Could not update assertion.";
+		}
+	    }
+	}
+
+    	echo json_encode($result);
+    }
+    else if(isset($_POST['logout']) && isset($_POST['user'])){
+    	 $mail = mysqli_real_escape_string($_POST['user']);
+    	 $sql_logout = "UPDATE user SET loggedIn='false' WHERE mail='$mail';";
+    	 if(!mysqli_query($link, $sql_logout)){
+	     return "Error: Could not update database logout.";
+	 }
+	 return "LoggedOut";
     }
     else{
-      if(isset($_GET['email'])){
-        $userobj->mail = mysqli_real_escape_string($link, $_GET['email']);
+      if(isset($_POST['email'])){
+        $userobj->mail = mysqli_real_escape_string($link, $_POST['email']);
 	$userobj->mail = urldecode($userobj->mail);
-	$sql_mail = "SELECT id FROM user WHERE mail='$userobj->mail';";
+	$sql_mail = "SELECT id, loggedIn FROM user WHERE mail='$userobj->mail';";
 	$result_mail = mysqli_query($link, $sql_mail);
 	if(!$result_mail){
 	    $userobj->mail = -1;
@@ -25,14 +71,37 @@
 	    $userobj->mail = 0;
 	}
 	else{
-	    //if user exists set $user->id to fetched user id
-	    $userobj->id = mysqli_fetch_array($result_mail);
-	    $userobj->id = $userobj->id['id'];
+	    $db_result = mysqli_fetch_array($result_mail);
+	    $url = "https://verifier.login.persona.org/verify";
+    	    $assert = $db_result['loggedIn'];
 
-	    // Set cookie to verify login
-	    $timeout = time() + 60 * 60 * 24 * 7;
-	    setcookie('loggedin', $userobj->id, $timeout);
+	    $params = 'assertion=' . urlencode($assert) . '&audience=' .
+               	      urlencode('https://manu4.manufrog.com/~macmarcu:443');
+            $ch = curl_init();
+
+    	    curl_setopt($ch, CURLOPT_URL, $url);
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	    curl_setopt($ch, CURLOPT_POST, 2);
+    	    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+    	    $result = curl_exec($ch);
+	    $result = json_decode($result);
+    	    curl_close($ch);
+
+	    if($result->status == "okey"){
+	    
+		//if user exists and is logged in set $user->id to fetched user id
+		//$userobj->id = mysqli_fetch_array($result_mail);
+	    	$userobj->id = $db_result['id'];
+
+	    	// Set cookie to verify login
+	    	//$timeout = time() + 60 * 60 * 24 * 7;
+	    	//setcookie('loggedin', $userobj->id, $timeout);
+	    }
+	    else{
+		$userobj->mail = -1;
+	    }
 	}
       }
     }
+}
 ?>

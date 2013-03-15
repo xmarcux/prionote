@@ -3,10 +3,10 @@
   <head>
     <title>Prio Note - Priority for your notes</title>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="jquery/jquery.mobile-1.2.0.min.css"/>
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.0.min.css"/>
     <link rel="stylesheet" href="index.css"/>
-    <script src="jquery/jquery-1.8.2.min.js"></script>
-    <script src="jquery/jquery.mobile-1.2.0.min.js"></script>
+    <script src="jquery/jquery-1.9.1.min.js"></script>
+    <script src="jquery/jquery.mobile-1.3.0.min.js"></script>
     <script src="index.js"></script>
     <script src="note.js"></script>
 
@@ -88,11 +88,13 @@
 	  </center>
 	</div>
       </div>
+
       <div id="optionPopup" data-role="popup" data-overlay-theme="a">
 	<div data-role="header">
 	  <center><p>Options</p><center>
 	</div>
 	<div data-role="content" data-theme="e">
+	  <a href="https://manu4.manufrog.com/~macmarcu/prionote/syncoptions.html" data-role="button">Sync options</a>
 	  <label for="selectSort">Sort by:</label>
 	  <select id="selectSort" data-native-menu="false">
 	    <option value="editDate">Edit date</option>
@@ -108,7 +110,11 @@
 	  </center>
 	</div>
       </div>
+      <div id="syncOptions" data-role="popup" data-overlay-theme="a">
+
+      </div>
     </div>
+
     <!-- Note Page -->
     <div id="notePage" data-role="page">
       <div id="header" data-role="header" data-position="fixed">
@@ -209,10 +215,67 @@
       </div>
     </div>
 
-    <!-- test page -->
+    <!-- Option page -->
+    <div id="optionPage" data-role="page">
+	<div data-role="header" data-position="fixed">
+	  <center><p>Options</p><center>
+	</div>
+	<div data-role="content">
+	  <div>
+	    <label for="selectSort">Note sort order:</label>
+	    <select id="selectSort" data-native-menu="false" data-theme="b">
+	      <option value="editDate">Edit date</option>
+	      <option value="reverseEditDate">Reverse edit date</option>
+	      <option value="creationDate">Creation date</option>
+	      <option value="reverseCreationDate">Reverse creation date</option>
+	      <option value="alphabeticOrder">Alphabetic order</option>
+	      <option value="reverseAlphabeticOrder">Reverse alphabetic order</option>
+	    </select>
+	  </div>
+	  <br/>
+	  <hr/>
+	  <div>
+	    <center>
+	    <b>Syncronize</b>
+	      <table>
+		<tr>
+		  <td>
+		    Syncroinize your notes to be able to see your notes on all firefox applications.<br/>
+		    Enter your e-mail address and login with persona.<br/>
+		    If you do not have a persona account you will be redirected to create one.<br/>
+		    To stop syncronize toggle button to off.
+		  </td>
+		</tr>
+	      </table>
+	    </center>
+	  </div>
+	  <div>
+	    <label for="mail">E-mail:</label><input id="email" data-theme="b"></input>
+	  </div>
+	  <center>
+	    <label for="toggleSync">Activate sync:</label>
+	    <div id="toggleSync" data-role="controlgroup" data-type="horizontal">
+	      <a href="#" data-role="button" data-theme="c">On</a>
+	      <a href="#" data-role="button" data-theme="c">Off</a>
+	    </div>
+	  </center>
+	  </div>
+	  <div id="optionFooter" data-role="footer" data-position="fixed">
+	    <div data-role="navbar">
+	      <ul>
+		<li><a id="optionButtonCancel" data-icon="delete" href="#" data-rel="back">Cancel</a></li>
+		<li><a id="optionButtonSave" data-icon="plus" href="#notePage">Save</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</div>
+    </div>
+
+
+    <!-- test page 
     <div id="testPage" data-role="page">
       <label for="mail">Email:</label><input id="mail"></input><button id="request_json">Click to request JSONP</button>
     </div>
-
+    -->
   </body>
 </html>
