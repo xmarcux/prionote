@@ -5,13 +5,23 @@
      * and contains the mail address if ok.
      */
 
-if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
+include_once '/home/macmarcu/public_html/prionote/server/include/magicquotes.inc.php';
+include_once '/home/macmarcu/public_html/prionote/server/include/db.inc.php';
+
+if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
     $userobj = new stdClass;
     $userobj->mail = -2;
 
     if(isset($_POST['assertion'])){
+
+	$assert = filter_input(
+    	    INPUT_POST,
+    	    'assertion',
+    	    FILTER_UNSAFE_RAW,
+    	    FILTER_FLAG_STRIP_LOW|FILTER_FLAG_STRIP_HIGH
+	);
+
         $url = "https://verifier.login.persona.org/verify";
-    	$assert = $_POST['assertion'];
 
 	$params = 'assertion=' . urlencode($assert) . '&audience=' .
                	  urlencode('https://manu4.manufrog.com/~macmarcu:443');
@@ -25,8 +35,8 @@ if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
 	$result = json_decode($result);
     	curl_close($ch);
 
-	if($result->status == "okey"){
-	    $mail = mysqli_real_escape_string($link, $result->email);
+	if($result->{'status'} == 'okay'){
+	    $mail = mysqli_real_escape_string($link, $result->{'email'});
 	    $assert = mysqli_real_escape_string($link, $assert);
 
 	    $sql_exist = "SELECT id FROM user WHERE mail='$mail';";
@@ -37,7 +47,7 @@ if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
 	    else if(mysqli_num_rows($result_exist) == 0){
 	    	 $sql_new_user = "INSERT INTO user (loggedIn, mail) VALUES ('$assert', '$mail');";
 		 if(!mysqli_query($link, $sql_new_user)){
-		     $result->error = "Could not insert new user in database."
+		     $result->error = "Could not insert new user in database.";
 		 }
 	    }
 	    else{
@@ -51,16 +61,21 @@ if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
     	echo json_encode($result);
     }
     else if(isset($_POST['logout']) && isset($_POST['user'])){
-    	 $mail = mysqli_real_escape_string($_POST['user']);
+    	 $mail = mysqli_real_escape_string($link, $_POST['user']);
     	 $sql_logout = "UPDATE user SET loggedIn='false' WHERE mail='$mail';";
     	 if(!mysqli_query($link, $sql_logout)){
 	     return "Error: Could not update database logout.";
 	 }
-	 return "LoggedOut";
+	 echo "LoggedOut";
     }
     else{
-      if(isset($_POST['email'])){
-        $userobj->mail = mysqli_real_escape_string($link, $_POST['email']);
+      if(isset($_POST['email']) || isset($_GET['email'])){
+        if(isset($_POST['email'])){
+	    $userobj->mail = mysqli_real_escape_string($link, $_POST['email']);
+	}
+	else{
+	    $userobj->mail = mysqli_real_escape_string($link, $_GET['email']);
+	}
 	$userobj->mail = urldecode($userobj->mail);
 	$sql_mail = "SELECT id, loggedIn FROM user WHERE mail='$userobj->mail';";
 	$result_mail = mysqli_query($link, $sql_mail);
@@ -74,7 +89,7 @@ if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
 	    $db_result = mysqli_fetch_array($result_mail);
 	    $url = "https://verifier.login.persona.org/verify";
     	    $assert = $db_result['loggedIn'];
-
+/*
 	    $params = 'assertion=' . urlencode($assert) . '&audience=' .
                	      urlencode('https://manu4.manufrog.com/~macmarcu:443');
             $ch = curl_init();
@@ -84,21 +99,31 @@ if(!empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off'){
 	    curl_setopt($ch, CURLOPT_POST, 2);
     	    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
     	    $result = curl_exec($ch);
+	    //test
+	    echo $result;
 	    $result = json_decode($result);
     	    curl_close($ch);
 
-	    if($result->status == "okey"){
-	    
+	    if($result->{'status'} == "okay"){
+*/
+	    //test
+	    if($assert != "false"){
 		//if user exists and is logged in set $user->id to fetched user id
 		//$userobj->id = mysqli_fetch_array($result_mail);
-	    	$userobj->id = $db_result['id'];
+		if(isset($_POST['loggedIn']) && $_POST['loggedIn'] == "?"){
+		    echo '{"loggedIn": "true"}';
+		}
+		else{
+	    	    $userobj->id = $db_result['id'];
+		    $userobj->mail = 'OK';
+		}
 
 	    	// Set cookie to verify login
 	    	//$timeout = time() + 60 * 60 * 24 * 7;
 	    	//setcookie('loggedin', $userobj->id, $timeout);
 	    }
 	    else{
-		$userobj->mail = -1;
+		$userobj->mail = -3;
 	    }
 	}
       }

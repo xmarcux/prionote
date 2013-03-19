@@ -1,12 +1,13 @@
 <?php
-    include_once $_SERVER['DOCUMENT_ROOT'] . '/include/magicquotes.inc.php';
-    include_once $_SERVER['DOCUMENT_ROOT'] . '/include/db.inc.php';
+    include_once '/home/macmarcu/public_html/prionote/server/include/magicquotes.inc.php';
+    include_once '/home/macmarcu/public_html/prionote/server/include/db.inc.php';
 
+if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
     header("content-type: application/json");
     $returnobj = new stdClass;
 
     if($error == ""){
-        include_once $_SERVER['DOCUMENT_ROOT'] . '/include/verifyuser.inc.php';
+        include_once '/home/macmarcu/public_html/prionote/server/include/verifyuser.inc.php';
 
         if(isset($_GET['deleteNotes'])){
 	    $delete = json_decode($_GET['deleteNotes'], true);
@@ -116,4 +117,5 @@
         $returnobj->error = $error;
     }
     echo $_GET['callback'] . '(' . json_encode($returnobj) . ')';
+}
 ?>
