@@ -368,9 +368,19 @@ function saveNote(){
 	$("#noteNoTextAlert").popup("open");
     else{
 	var prio = $("#selectPrio").val();
+	var prioNo = 0;
+	if(prio == "high")
+	    prioNo = 1;
+	else if(prio == "medium")
+	    prioNo = 2;
+	else if(prio == "low")
+	    prioNo = 3;
+	else
+	    prioNo = 0;
+
 	var date = new Date();
 	date = date.getTime();
-	var note = new Note(date, date, text);
+	var note = new Note(date, date, text, prioNo);
 
 	var notes;
 	if(!localStorage.getItem(prio + "Notes"))
