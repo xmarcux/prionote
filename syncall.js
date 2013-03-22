@@ -107,51 +107,45 @@ function syncFromServer(rtndata){
     // verify sent notes is inserted ok
     // if delete ok remove from delete in localStorage
     var rtnArray = rtndata.notes;
+    var highArr = [];
+    var mediumArr = [];
+    var lowArr = [];
+    var noneArr = [];
     for(var i=0; i < rtnArray.length; i++){
-	var n = new Note(rtnArray[i].number, rtnArray[i].editDate, 
-			 rtnArray[i].text, rtnArray[i].prio);
+	var n = {number: rtnArray[i].number, editDate: rtnArray[i].editDate, 
+		 text: rtnArray[i].text, prio: rtnArray[i].prio};
+	if(rtnArray[i].prio == 1)
+	    highArr.push(n);
+	else if(rtnArray[i].prio == 2)
+	    mediumArr.push(n);
+	else if(rtnArray[i].prio == 3)
+	    lowArr.push(n);
+	else
+	    noneArr.push(n);
     }
-    alert(JSON.stringify(rtndata));
-}
-
-// if updated note change in server so note is updated and not
-// added a new note.
-function syncNewOrUpdateNote(note){
-    var mail = localStorage("email");
-    mail = encodeURIComponent(mail);
-    var surl = "https://manu4.manufrog.com/~macmarcu/prionote/server/syncdata.php";
-
-    var notes = [];
-    notes.push(note);
-    notes = JSON.stringify(notes);
-
-    var snddata = {email: mail, notes: notes};
-
-    $.ajax({
-	url: surl,
-	data: snddata,
-	dataType: "jsonp",
-	jsonp: "callback",
-	jsonpCallback: "syncFromServer"
-    });
-}
-
-function deleteOneNote(noteNumber){
-    var mail = localStorage("email");
-    mail = encodeURIComponent(mail);
-    var surl = "https://manu4.manufrog.com/~macmarcu/prionote/server/syncdata.php";
-
-    var del = [];
-    del.push(noteNumber);
-    del = JSON.stringify(del);
-
-    var snddata = {email: mail, deleteNotes: del};
-
-    $.ajax({
-	url: surl,
-	data: snddata,
-	dataType: "jsonp",
-	jsonp: "callback",
-	jsonpCallback: "syncFromServer"
-    });
+    if(highArr.length > 0){
+	var high = localStorage.getItem("highNotes");
+	high = JSON.parse(high);
+	high = high.concat(highArr);
+	localStorage.setItem("highNotes", JSON.stringify(high));
+    }
+    if(mediumArr.length > 0){
+	var medium = localStorage.getItem("mediumNotes");
+	medium = JSON.parse(medium);
+	medium = medium.concat(mediumArr);
+	localStorage.setItem("mediumNotes", JSON.stringify(medium));
+    }
+    if(lowArr.length > 0){
+	var low = localStorgae.getItem("lowNotes");
+	low = JSON.parse(low);
+	low = low.concat(lowArr);
+	localStorage.setItem("lowNotes", JSON.stringify(low));
+    }
+    if(noneArr.length > 0){
+	var none = localStorage.getItem("noneNotes");
+	none = JSON.parse(none);
+	none = none.concat(noneArr);
+	localStorage.setItem("noneNotes", JSON.stringify(none));
+    }
+//    alert(JSON.stringify(rtndata));
 }
