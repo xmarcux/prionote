@@ -1,6 +1,31 @@
 $(document).ready(function(){
     init();
 
+    //Sync with server
+    if(typeof(Worker) !== "undefined"){
+	var syncW = new Worker("syncall.js");
+
+	var mail = localStorage.getItem("email");
+	var notesHigh = JSON.parse(localStorage.getItem("highNotes"));
+	var notesMed = JSON.parse(localStorage.getItem("mediumNotes"));
+	var notesLow = JSON.parse(localStorage.getItem("lowNotes"));
+	var notesNo = JSON.parse(localStorage.getItem("noneNotes"));
+	var delNotes = JSON.parse(localStorage.getItem("deletedNotes"));
+	var allNotes = [];
+	allNotes.push(notesNo);
+	allNotes.push(notesLow);
+	allNotes.push(notesMed);
+	allNotes.push(notesHigh);
+	allNotes.push(delNotes);
+	allNotes.push(mail);
+
+	syncW.postMessage(JSON.stringify(allNotes));
+
+	syncW.onmessage = function(evt){
+	    alert(evt.data);
+	};
+    }
+
     document.oncontextmenu = function(){return false;};
 
     $("#noteMenu").on({
