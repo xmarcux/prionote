@@ -38,6 +38,7 @@ if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
 	            $number = mysqli_real_escape_string($link, $note['number']);
 		    $editDate = mysqli_real_escape_string($link, $note['editDate']);
 		    $text = mysqli_real_escape_string($link, $note['text']);
+		    $prio = mysqli_real_escape_string($link, $note['prio']);
 
 		    // Check if it exists in db if it does delete exixistng note and insert new
 		    $sql_exists = "SELECT * FROM notes WHERE createId='$number' AND userId='$userid';";
@@ -55,8 +56,8 @@ if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
 		        }
 		    }
 
-	            $sql_ins = "INSERT INTO notes (createId, edit, text, userId)";
-		    $sql_ins = $sql_ins . " VALUES ('$number', '$editDate', '$text', '$userid');";
+	            $sql_ins = "INSERT INTO notes (createId, edit, text, prio, userId)";
+		    $sql_ins = $sql_ins . " VALUES ('$number', '$editDate', '$text', '$prio',  '$userid');";
 		    if(!mysqli_query($link, $sql_ins)){
 		        $returnobj->error = "Could not insert values in notes db: " . mysqli_error($link);
 		    }
@@ -93,7 +94,8 @@ if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
         else if(isset($_GET['lastNote'])){
             if($userobj->mail == 'OK'){
 	        $lastNote = mysqli_real_escape_string($link, $_GET['lastNote']);
-	        $sql_larger = "SELECT * FROM notes WHERE userId='$userobj->id' AND createId>'$lastNote';";
+	        //$sql_larger = "SELECT * FROM notes WHERE userId='$userobj->id' AND createId>'$lastNote';";
+	        $sql_larger = "SELECT * FROM notes WHERE userId='$userobj->id' AND edit>'$lastNote';";
 	        $result_larger = mysqli_query($link, $sql_larger);
 	        if(!$result_larger){
 	            $returnobj->error = "Could not select notes larger then...";

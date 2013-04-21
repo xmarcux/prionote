@@ -33,7 +33,8 @@ if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
                 $returnobj->lastNote = 0;
             }
             else{
-                $returnobj->lastNote =  mysqli_fetch_array($resultLastNote);//[0];
+		$row = mysqli_fetch_array($resultLastNote);
+                $returnobj->lastNote =  $row['createId'];
             }
         }
     }

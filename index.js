@@ -1,31 +1,6 @@
 $(document).ready(function(){
     init();
 
-    //Sync with server
-    if(typeof(Worker) !== "undefined"){
-	var syncW = new Worker("syncall.js");
-
-	var mail = localStorage.getItem("email");
-	var notesHigh = JSON.parse(localStorage.getItem("highNotes"));
-	var notesMed = JSON.parse(localStorage.getItem("mediumNotes"));
-	var notesLow = JSON.parse(localStorage.getItem("lowNotes"));
-	var notesNo = JSON.parse(localStorage.getItem("noneNotes"));
-	var delNotes = JSON.parse(localStorage.getItem("deletedNotes"));
-	var allNotes = [];
-	allNotes.push(notesNo);
-	allNotes.push(notesLow);
-	allNotes.push(notesMed);
-	allNotes.push(notesHigh);
-	allNotes.push(delNotes);
-	allNotes.push(mail);
-
-	syncW.postMessage(JSON.stringify(allNotes));
-
-	syncW.onmessage = function(evt){
-	    alert(evt.data);
-	};
-    }
-
     document.oncontextmenu = function(){return false;};
 
     $("#noteMenu").on({
@@ -66,6 +41,20 @@ $(document).ready(function(){
     $("#optionButton").click(optionPopupInit);
     $("#buttonOkSort").click(sortChanged);
 
+    $("#mainPage").on("pageshow", function(){
+	var prio = sessionStorage.getItem("currentPrio");
+	if(prio == "high")
+	    $("#highButton a").addClass("ui-btn-active");
+	else if(prio == "medium")
+	    $("#mediumButton a").addClass("ui-btn-active");
+	else if(prio == "low")
+	    $("#lowButton a").addClass("ui-btn-active");
+	else if(prio == "none")
+	    $("#noneButton a").addClass("ui-btn-active");
+	else
+	    $("#allButton a").addClass("ui-btn-active");
+    });
+
     $("#notePage").on("pageinit", notePageInit);
     $("#notePage").on("pagehide", function(){
 	$("#noteButtonCancel").removeClass("ui-btn-active");
@@ -95,6 +84,136 @@ $(document).ready(function(){
 	if($("#allButton a").hasClass("ui-btn-active"))
 	    sessionStorage.removeItem("currentPrio");
     });
+
+    //Sync with server
+    if(typeof(Worker) !== "undefined" &&
+       localStorage.getItem("sync") == "true" &&
+       navigator.onLine){
+	var syncW = new Worker("syncall.js");
+
+	var mail = localStorage.getItem("email");
+	var notesHigh = JSON.parse(localStorage.getItem("highNotes"));
+	var notesMed = JSON.parse(localStorage.getItem("mediumNotes"));
+	var notesLow = JSON.parse(localStorage.getItem("lowNotes"));
+	var notesNo = JSON.parse(localStorage.getItem("noneNotes"));
+	var delNotes = JSON.parse(localStorage.getItem("deletedNotes"));
+	var allNotes = [];
+	allNotes.push(notesNo);
+	allNotes.push(notesLow);
+	allNotes.push(notesMed);
+	allNotes.push(notesHigh);
+	allNotes.push(delNotes);
+	allNotes.push(mail);
+
+	syncW.postMessage(JSON.stringify(allNotes));
+
+	syncW.onmessage = function(evt){
+	    if(evt.data.delete == "OK")
+		localStorage.removeItem("deletedNotes");
+
+	    var noNotes = 0;
+	    if(evt.data.high){
+		var high;
+		high = JSON.parse(localStorage.getItem("highNotes"));
+		if(Array.isArray(high)){
+		    //iterate over all and see if it is an update, remove old insert new
+		    var dataHigh = evt.data.high;
+		    for(var i=0; i < high.length; i++){
+			for(var j=0; j < dataHigh.length; j++){
+			    if(high[i].number == dataHigh[j].number){
+				high.splice(i, 1, dataHigh[j]);
+				dataHigh.splice(j, 1);
+				break;
+			    }
+			}
+		    }
+		    high = high.concat(dataHigh);
+		}
+		else{
+		    high = evt.data.high;
+		}
+		localStorage.setItem("highNotes", JSON.stringify(high));
+		noNotes += evt.data.high.length;
+	    }
+	    if(evt.data.medium){
+		var medium;
+		medium = JSON.parse(localStorage.getItem("mediumNotes"));
+		if(Array.isArray(medium)){
+		    //iterate over all and see if it is an update, remove old insert new
+		    var dataMedium = evt.data.medium;
+		    for(var i=0; i < medium.length; i++){
+			for(var j=0; j < dataMedium.length; j++){
+			    if(medium[i].number == dataMedium[j].number){
+				medium.splice(i, 1, dataMedium[j]);
+				dataMedium.splice(j, 1);
+				break;
+			    }
+			}
+		    }
+		    medium = medium.concat(dataMedium);
+		}
+		else{
+		    medium = evt.data.medium;
+		}
+		localStorage.setItem("mediumNotes", JSON.stringify(medium));
+		noNotes += evt.data.medium.length;
+	    }
+	    if(evt.data.low){
+		var low;
+		low = JSON.parse(localStorage.getItem("lowNotes"));
+		if(Array.isArray(low)){
+		    //iterate over all and see if it is an update, remove old insert new
+		    var dataLow = evt.data.low;
+		    for(var i=0; i < low.length; i++){
+			for(var j=0; j < dataLow.length; j++){
+			    if(low[i].number == dataLow[j].number){
+				low.splice(i, 1, dataLow[j]);
+				dataLow.splice(j, 1);
+				break;
+			    }
+			}
+		    }
+		    low = low.concat(dataLow);
+		}
+		else{
+		    low = evt.data.low;
+		}
+		localStorage.setItem("lowNotes", JSON.stringify(low));
+		noNotes += evt.data.low.length;
+	    }
+	    if(evt.data.none){
+		var none;
+		none = JSON.parse(localStorage.getItem("noneNotes"));
+		if(Array.isArray(none)){
+		    //iterate over all and see if it is an update, remove old insert new
+		    var dataNone = evt.data.none;
+		    for(var i=0; i < none.length; i++){
+			for(var j=0; j < dataNone.length; j++){
+			    if(none[i].number == dataNone[j].number){
+				none.splice(i, 1, dataNone[j]);
+				dataNone.splice(j, 1);
+				break;
+			    }
+			}
+		    }
+		    none = none.concat(dataNone);
+		}
+		else{
+		    none = evt.data.none;
+		}
+		localStorage.setItem("noneNotes", JSON.stringify(none));
+		noNotes += evt.data.none.length;
+	    }
+
+	    if(noNotes > 0){
+		var currNotes = new Number($("#totalCount").text());
+		$("#totalCount").text(currNotes + noNotes);
+	    }
+
+	    $("#allButton a").click();
+	};
+    }
+
 });
 
 function init(){
@@ -139,38 +258,31 @@ function init(){
 }
 
 function fillTable(){
-    var notesArray;
+    var notesArray = [];
 
     if(sessionStorage.currentPrio != undefined){
 	notesArray = localStorage.getItem(sessionStorage.currentPrio + "Notes");
 	notesArray = JSON.parse(notesArray);
     }
     else{
+	var tempNotes;
 	if(localStorage.highNotes != undefined){
-	    var tempNotes = JSON.parse(localStorage.highNotes);
-	    for(var i=0; i<tempNotes.length; i++)
-		tempNotes[i].prio = "high";
+	    tempNotes = JSON.parse(localStorage.highNotes);
 	    notesArray = tempNotes;
 	}
 
 	if(localStorage.mediumNotes != undefined){
 	    tempNotes = JSON.parse(localStorage.mediumNotes);
-	    for(var j=0; j<tempNotes.length; j++)
-		tempNotes[j].prio = "medium";
 	    notesArray = notesArray.concat(tempNotes);
 	}
 
 	if(localStorage.lowNotes != undefined){
 	    tempNotes = JSON.parse(localStorage.lowNotes);
-	    for(var k=0; k<tempNotes.length; k++)
-		tempNotes[k].prio = "low";
 	    notesArray = notesArray.concat(tempNotes);
 	}
 
 	if(localStorage.noneNotes != undefined){
 	    tempNotes = JSON.parse(localStorage.noneNotes);
-	    for(var l=0; l<tempNotes.length; l++)
-		tempNotes[l].prio = "none";
 	    notesArray = notesArray.concat(tempNotes);
 	}
     }
@@ -185,16 +297,21 @@ function fillTable(){
     $("#noteListDiv p").remove();
 
     var head = $("#prioHeader");
-    if(sessionStorage.currentPrio == "medium")
+    if(sessionStorage.currentPrio == "medium"){
 	head.text("Medium Priority");
-    else if(sessionStorage.currentPrio == "low")
+    }
+    else if(sessionStorage.currentPrio == "low"){
 	head.text("Low Priority");
-    else if(sessionStorage.currentPrio == "none")
+    }
+    else if(sessionStorage.currentPrio == "none"){
 	head.text("None Priority");
-    else if(sessionStorage.currentPrio == "high")
+    }
+    else if(sessionStorage.currentPrio == "high"){
 	head.text("High Priority");
-    else
+    }
+    else{
 	head.text("All notes");
+    }
 
     if(notesArray && notesArray.length > 0){
 	$("#prioCount").text(notesArray.length);
@@ -235,8 +352,16 @@ function fillTable(){
 	    a.append(p);
 	    li.append(a);
 	    li.attr("id", notesArray[i].number);
-	    if(notesArray[i].prio != undefined)
-		li.attr("data-prio", notesArray[i].prio);
+	    if(notesArray[i].prio != undefined){
+		var p = "high";
+		if(notesArray[i].prio == 2)
+		    p = "medium";
+		if(notesArray[i].prio == 3)
+		    p= "low";
+		if(notesArray[i].prio == 0)
+		    p = "none";
+		li.attr("data-prio", p);
+	    }
 	    ulList.append(li);
 
 	    li.click(noteShowPageInit);
@@ -301,14 +426,18 @@ function notePageInit(){
 	$("#text").val(note.text);
 	
 	$("#selectPrio").removeAttr("selected");
-	if(sessionStorage.currentPrio == "medium")
-	    $("#selectPrio").children("[value='medium']").attr("selected", "selected");
-	else if(sessionStorage.currentPrio == "low")
-	    $("#selectPrio").children("[value='low']").attr("selected", "selected");
-	else if(sessionStorage.currentPrio == "none")
-	    $("#selectPrio").children("[value='none']").attr("selected", "selected");
-	else
-	    $("#selectPrio").children("[value='high']").attr("selected", "selected");
+	if(sessionStorage.currentPrio == "medium"){
+	    $("#selectPrio").val('medium').attr("selected", true).siblings('option').removeAttr("selected");
+	}
+	else if(sessionStorage.currentPrio == "low"){
+	    $("#selectPrio").val('low').attr("selected", true).siblings('option').removeAttr("selected");	 
+	}
+	else if(sessionStorage.currentPrio == "none"){
+	    $("#selectPrio").val('none').attr("selected", true).siblings('option').removeAttr("selected");
+	}
+	else{
+	    $("#selectPrio").val('high').attr("selected", true).siblings('option').removeAttr("selected");
+	}
 	if($("#header").hasClass("ui-header"))
 	    $("#selectPrio").selectmenu("refresh", true);
 
@@ -442,6 +571,28 @@ function saveNote(){
 	    }
 	}
 
+	// Sync with server
+	if(localStorage.getItem("sync") == "true" && navigator.onLine){
+	    var syncW = new Worker("sync.js");
+	    var syncObj = {mail: localStorage.getItem("email")};
+	    syncObj.newUpdate = note;
+	    syncW.postMessage(syncObj);
+
+	    syncW.onmessage = function(evt){
+		var prio = sessionStorage.getItem("currentPrio");
+		if(prio == "high")
+		    $("#highButton a").addClass("ui-btn-active");
+		else if(prio == "medium")
+		    $("#mediumButton a").addClass("ui-btn-active");
+		else if(prio == "low")
+		    $("#lowButton a").addClass("ui-btn-active");
+		else if(prio == "none")
+		    $("#noneButton a").addClass("ui-btn-active");
+		else
+		    $("#allButton a").addClass("ui-btn-active");
+	    };
+	}
+
 	localStorage.setItem(prio + "Notes", JSON.stringify(notes));
 	sessionStorage.currentPrio = prio;
 	$("#" + prio + "Button a").click();
@@ -464,23 +615,23 @@ function noteShowPageInit(){
     $("#selectPrioShow").removeAttr("selected");
     if(sessionStorage.currentPrio == "medium"){
 	notesArray = localStorage.getItem("mediumNotes");
-	$("#selectPrioShow").children("[value='medium']").attr("selected", "selected");
+	$("#selectPrioShow").val('medium').attr("selected", true).siblings('option').removeAttr("selected");
     }
     else if(sessionStorage.currentPrio == "low"){
 	notesArray = localStorage.getItem("lowNotes");
-	$("#selectPrioShow").children("[value='low']").attr("selected", "selected");
+	$("#selectPrioShow").val('low').attr("selected", true).siblings('option').removeAttr("selected");
     }
     else if(sessionStorage.currentPrio == "none"){
 	notesArray = localStorage.getItem("noneNotes");
-	$("#selectPrioShow").children("[value='none']").attr("selected", "selected");
-
+	$("#selectPrioShow").val('none').attr("selected", true).siblings('option').removeAttr("selected");
     }
     else{
 	notesArray = localStorage.getItem("highNotes");
-	$("#selectPrioShow").children("[value='high']").attr("selected", "selected");
+	$("#selectPrioShow").val('high').attr("selected", true).siblings('option').removeAttr("selected");
     }
-    if($("#noteShowHeader").hasClass("ui-header"))
+    if($("#noteShowHeader").hasClass("ui-header")){
 	$("#selectPrioShow").selectmenu("refresh", true);
+    }
 
     notesArray = JSON.parse(notesArray);
 
@@ -599,6 +750,43 @@ function replaceWithLinks(text){
 function deleteNote(){
     var note = JSON.parse(sessionStorage.note);
     if(note){
+	// Sync with server
+	if(localStorage.getItem("sync") == "true"){
+	    if(navigator.onLine){
+		var syncW = new Worker("sync.js");
+		var syncObj = {mail: localStorage.getItem("email"),
+			       deleteNote: note};
+		syncW.postMessage(syncObj);
+		syncW.onmessage = function(evt){
+		
+		    if(evt.data.error){
+			var del = JSON.parse(localStorage.getItem("deletedNotes"));
+			if(Array.isArray(del)){
+			    del.push(note.number);
+			}
+			else{
+			    del = [];
+			    del.push(note.number);
+			}
+			localStorage.setItem("deletedNotes", JSON.stringify(del));
+		    }
+		    else
+			localStorage.removeItem("deletedNotes");
+		}
+	    }
+	    else{
+		var del = JSON.parse(localStorage.getItem("deletedNotes"));
+		if(Array.isArray(del)){
+		    del.push(note.number);
+		}
+		else{
+		    del = [];
+		    del.push(note.number);
+		}
+		localStorage.setItem("deletedNotes", JSON.stringify(del));
+	    }
+	}
+
 	var oldNotes;
 	var newNotes = new Array();
 	if(sessionStorage.currentPrio == "medium")
