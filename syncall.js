@@ -3,20 +3,21 @@ var notes;
 onmessage = function(evt){
     notes = JSON.parse(evt.data);
     var mail = notes[5];
+    var verify = notes[6];
     mail = encodeURIComponent(mail);
     var surl = "https://manu4.manufrog.com/~macmarcu/prionote/server/index.php";
-    surl = surl + "?callback=noteFromServer&email=" + mail;
+    surl = surl + "?callback=noteFromServer&email=" + mail + "&verify=" + verify;
 
     importScripts(surl);
 }
 
 function noteFromServer(rtndata){
     if(rtndata.lastNote != null && rtndata.error == null && rtndata.notes != 0){
-	syncData(rtndata.lastNote);
+	syncData(rtndata.lastNote, rtndata.verify);
     }
 }
 
-function syncData(lastNote){
+function syncData(lastNote, verify){
     var mail = notes[5];
     mail = encodeURIComponent(mail);
     var surl = "https://manu4.manufrog.com/~macmarcu/prionote/server/syncdata.php";
@@ -95,7 +96,7 @@ function syncData(lastNote){
 	    snddata = snddata + "deleteNotes=" + del;
     }
 
-    surl = surl + "?callback=syncFromServer&" + snddata;
+    surl = surl + "?callback=syncFromServer&" + snddata + "&verify=" + verify;
     importScripts(surl);   
 }
 
@@ -140,6 +141,7 @@ function syncFromServer(rtndata){
 
     if(rtndata.delete == "OK")
 	allNotes.delete = rtndata.delete;
+    allNotes.verify = rtndata.verify;
 
     postMessage(allNotes);
 }

@@ -92,6 +92,7 @@ $(document).ready(function(){
 	var syncW = new Worker("syncall.js");
 
 	var mail = localStorage.getItem("email");
+	var verify = localStorage.getItem("verify");
 	var notesHigh = JSON.parse(localStorage.getItem("highNotes"));
 	var notesMed = JSON.parse(localStorage.getItem("mediumNotes"));
 	var notesLow = JSON.parse(localStorage.getItem("lowNotes"));
@@ -104,6 +105,7 @@ $(document).ready(function(){
 	allNotes.push(notesHigh);
 	allNotes.push(delNotes);
 	allNotes.push(mail);
+	allNotes.push(verify);
 
 	syncW.postMessage(JSON.stringify(allNotes));
 
@@ -209,6 +211,9 @@ $(document).ready(function(){
 		var currNotes = new Number($("#totalCount").text());
 		$("#totalCount").text(currNotes + noNotes);
 	    }
+
+	    if(evt.data.verify)
+		localStorage.setItem("verify", evt.data.verify);
 
 	    $("#allButton a").click();
 	};
@@ -373,7 +378,13 @@ function fillTable(){
 	    });
 
 	}
-	ulList.listview("refresh");
+
+	if(ulList.hasClass('ui-listview')) {
+	    ulList.listview('refresh');
+	} 
+	else{
+            ulList.trigger('create');
+	}
     }
     else{
 	$("#noteListDiv").append("<p><strong>There are no notes to show...<strong></p>");
@@ -576,6 +587,7 @@ function saveNote(){
 	    var syncW = new Worker("sync.js");
 	    var syncObj = {mail: localStorage.getItem("email")};
 	    syncObj.newUpdate = note;
+	    syncObj.verify = localStorage.getItem("verify");
 	    syncW.postMessage(syncObj);
 
 	    syncW.onmessage = function(evt){
@@ -590,6 +602,10 @@ function saveNote(){
 		    $("#noneButton a").addClass("ui-btn-active");
 		else
 		    $("#allButton a").addClass("ui-btn-active");
+		//test
+		alert(JSON.stringify(evt.data));
+		if(evt.data.verify)
+		    localStorage.setItem("verify", evt.data.verify);
 	    };
 	}
 
@@ -756,6 +772,7 @@ function deleteNote(){
 		var syncW = new Worker("sync.js");
 		var syncObj = {mail: localStorage.getItem("email"),
 			       deleteNote: note};
+		syncObj.verify = localStorage.getItem("verify");
 		syncW.postMessage(syncObj);
 		syncW.onmessage = function(evt){
 		
@@ -772,7 +789,10 @@ function deleteNote(){
 		    }
 		    else
 			localStorage.removeItem("deletedNotes");
-		}
+
+		    if(evt.data.verify)
+			localStorage.setItem("verify", evt.data.verify);
+		};
 	    }
 	    else{
 		var del = JSON.parse(localStorage.getItem("deletedNotes"));

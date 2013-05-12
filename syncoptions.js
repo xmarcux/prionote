@@ -19,26 +19,19 @@ $(document).ready(function(){
 	      url: 'https://manu4.manufrog.com/~macmarcu/prionote/server/include/verifyuser.inc.php',
 	      data: {assertion: assertion},
 	      success: function(res, status, xhr) {
-		  alert(res);
 		  res = JSON.parse(res);
 		  $("#personaButtonTxt").html("Sign out");
 		  $("#toggleSyncSwitch").slider("enable");
 		  $("#toggleSyncSwitch").val("on");
 		  $("#toggleSyncSwitch").slider("refresh");
 		  localStorage.setItem("sync", "true");
-		  if((res.status == "okay") && (status == "success"))
+		  if((res.status == "okay") && (status == "success")){
 		      localStorage.setItem("email", res.email);
-		  alert(JSON.stringify(res));
-		  alert(JSON.stringify(status));
-		  alert(JSON.stringify(xhr));
-		  alert(JSON.stringify(assertion));
+		      localStorage.setItem("verify", res.verify);
+		  }
 	      },
 	      error: function(xhr, status, err){
 		  alert("Error login");
-		  alert(JSON.stringify(xhr));
-		  alert(JSON.stringify(status));
-		  alert(JSON.stringify(err));
-		  alert(JSON.stringify(assertion));
 	      }
 	  });  
 	},
@@ -46,7 +39,8 @@ $(document).ready(function(){
 	    $.ajax({
 		type: 'POST',
 		url: 'https://manu4.manufrog.com/~macmarcu/prionote/server/include/verifyuser.inc.php',
-		data: {logout: "true", user: localStorage.getItem("email")},
+		data: {logout: "true", user: localStorage.getItem("email"),
+		       verify: localStorage.getItem("verify")},
 		success: function(res, status, xhr){
 		    $("#personaButtonTxt").html("Sign in");
 		    $("#toggleSyncSwitch").slider("disable");
@@ -54,15 +48,10 @@ $(document).ready(function(){
 		    $("#toggleSyncSwitch").slider("refresh");
 		    localStorage.removeItem("sync");
 		    localStorage.removeItem("email");
-		    alert(JSON.stringify(res));
-		    alert(JSON.stringify(status));
-		    alert(JSON.stringify(xhr));
+		    localStorage.removeItem("verify");
 		},
 		error: function(xhr, status, err){
 		    alert("Logout fail!");
-		    alert(JSON.stringify(xhr));
-		    alert(JSON.stringify(status));
-		    alert(JSON.stringify(err));
 		}
 	    });
 	}
@@ -79,30 +68,30 @@ function personaLogin(){
 }
 
 function isLoggedIn(){
-    if(localStorage.getItem("email")){
+    if(localStorage.getItem("email") && localStorage.getItem("verify")){//verify
 	var mail = localStorage.getItem("email");
+	var verify = localStorage.getItem("verify");//verify
 	if(mail.length > 1){
-	    //test
-	    //	navigator.id.request();
 	    $.ajax({
 		type: 'POST',
 		url: 'https://manu4.manufrog.com/~macmarcu/prionote/server/include/verifyuser.inc.php',
-		data: {email: mail, loggedIn: "?"},
+		data: {email: mail, loggedIn: "?", verify: verify},
 		success: function(res, status, xhr){
-		    alert(JSON.stringify(res));
-		    alert(JSON.stringify(status));
-		    alert(JSON.stringify(xhr));
+		    res = JSON.parse(res);
+		    if(res.loggedIn == "true"){
+			$("#personaButtonTxt").html("Sign out");
+			$("#toggleSyncSwitch").slider("enable");
+
+		    }
 		},
 		error: function(xhr, status, err){
-		    alert(JSON.stringify(xhr));
-		    alert(JSON.stringify(status));
-		    alert(JSON.stringify(err));
+		    alert("Error: " + err);
 		}
 	    });
 
 	    if(localStorage.getItem("sync") == "true"){
-		alert("Sync is on");
 		$("#toggleSyncSwitch").val("on");
+		$("#toggleSyncSwitch").slider("refresh");
 	    }
 	}
     }

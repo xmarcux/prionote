@@ -5,20 +5,26 @@
 */
 
 
-/* Remove the existing tables and
-   database if they already exists.
+/* Remove the existing tables
+   if they already exists.
 */
 
-DROP DATABASE IF EXISTS prionote;
+USE macmarcu_prionote;
 
-/* Create new database and new tables */
-CREATE DATABASE prionote;
-USE prionote;
+DROP TABLE IF EXISTS base_user, user, notes;
+
+/* Create new new tables */
+
+CREATE TABLE base_user (
+       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       mail VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE user (
-       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       tableId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       id INT NOT NULL,
        loggedIn VARCHAR(255),
-       mail VARCHAR(255) NOT NULL
+       verify VARCHAR(255)
 );
 
 CREATE TABLE notes (
@@ -31,12 +37,12 @@ CREATE TABLE notes (
 );
 
 /* Populate user table with values */
-INSERT INTO user (loggedIn, mail) VALUES ("false", "marcux@marcux.org");
-INSERT INTO user (loggedIn, mail) VALUES ("false", "putte@marcux.org");
-INSERT INTO user (loggedIn, mail) VALUES ("false", "svenne@marcux.org");
+/*INSERT INTO user (loggedIn, mail) VALUES ("false", "marcux@marcux.org");*/
+INSERT INTO base_user (mail) VALUES ("putte@marcux.org");
+/*INSERT INTO user (loggedIn, mail) VALUES ("false", "svenne@marcux.org");
 INSERT INTO user (loggedIn, mail) VALUES ("false", "lotta@marcux.org");
 INSERT INTO user (loggedIn, mail) VALUES ("false", "nonotes@marcux.org");
-
+*/
 /* Populate notes table with values */
 INSERT INTO notes (createId, edit, text, prio, userId)
 VALUES (123456, 654321, "Remember to water the plants", 1, 1);

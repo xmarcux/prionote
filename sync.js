@@ -9,8 +9,10 @@ onmessage = function(evt){
 	var notes = [];
 	notes.push(evt.data.newUpdate);
 	notes = JSON.stringify(notes);
+	
+	var verify = evt.data.verify;
 
-	var snddata = "email=" +  mail + "&notes=" +  notes;
+	var snddata = "email=" +  mail + "&notes=" +  notes + "&verify=" + verify;
 	surl += "callback=syncFromServer&" + snddata;
 
 	importScripts(surl);
@@ -24,8 +26,9 @@ onmessage = function(evt){
 	var del = [];
 	del.push(evt.data.deleteNote.number);
 	del = JSON.stringify(del);
-	
-	var snddata = "email=" +  mail + "&deleteNotes=" +  del;
+
+	var verify = evt.data.verify;
+	var snddata = "email=" +  mail + "&deleteNotes=" +  del + "&verify=" + verify;
 	surl += "callback=syncFromServer&" + snddata;
 
 	var returnobj = {};
@@ -37,13 +40,19 @@ onmessage = function(evt){
 	    returnobj.note = evt.data.deleteNote;
 	    postMessage(returnobj);
 	}
-	postMessage(returnobj.success = "success");
+//	postMessage(returnobj.success = "success");
     }
 }
 
 function syncFromServer(rtndata){
-    if(rtndata.error)
-	postMessage(rtndata.error);
-    else
-	postMessage(rtndata.success = "success");
+    var postData = {};
+    if(rtndata.error){
+	postData.error = rtndata.error;
+	postMessage(postData);
+    }
+    else{
+	postData.success = "success";
+	postData.verify = rtndata.verify;
+	postMessage(postData);
+    }
 }
